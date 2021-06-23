@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1623724987 source:d:\thilla\0.puc\repopuc\descansogarantido\main.c
+	<stdio.h>
+	<stdlib.h>
+	<locale.h>
+	<string.h>
+	<ctype.h>
+
+1624345555 source:d:\thilla\0.puc\repopuc\hoteldescansogarantido\hoteldescansogarantido\main.c
+	<stdio.h>
+	<stdlib.h>
+	<locale.h>
+	<string.h>
+	<ctype.h>
+
