@@ -17,9 +17,11 @@ void pesquisarClienteEstadia(char nomeCliente[], char codCliente[]);
 void pesquisarDadosQuartos(char numHospedes[], char codQuarto[]);
 int verificaMes(int mes);
 void lerEstadia();
+void pesquisarEstadia();
+void pontosFidelidade();
 
 //function do Menu principal
-enum opcoes {SAIR, CLIENTE, FUNCIONARIO, QUARTO, ESTADIA, PESQUISAR_CLIENTE, LISTAR_CLIENTES, PESQUISAR_FUNCIONARIO, EXIBIR_ESTADIAS, PONTOS_FIDELIDADE, CHECKOUT};
+enum opcoes {SAIR, CLIENTE, FUNCIONARIO, QUARTO, ESTADIA, PESQUISAR_CLIENTE, LISTAR_CLIENTES, PESQUISAR_FUNCIONARIO, EXIBIR_ESTADIAS, PESQUISAR_ESTADIA, PONTOS_FIDELIDADE, CHECKOUT};
 int selectFunctions(int select)
 {
     switch(select)
@@ -54,8 +56,13 @@ int selectFunctions(int select)
     case EXIBIR_ESTADIAS:
         puts("\nExibir as estadias");
         break;
+    case PESQUISAR_ESTADIA:
+        puts("\nFazer pesquisa de estadia");
+        pesquisarEstadia();
+        break;
     case PONTOS_FIDELIDADE:
         puts("\nCalcular pontos fidelidade");
+        pontosFidelidade();
         break;
     case CHECKOUT:
         puts("\nFazer checkout");
@@ -516,6 +523,78 @@ void cabecalhoClientes(int opcao){
   }
 }
 
+void pesquisarEstadia()
+{
+  system("cls");
+  Estadia estadia;
+  FILE *arqEstadia;
+  char nomeCliente[100], codCliente[100];
+  getchar();
+  arqEstadia = fopen("estadias.txt", "rb");
+  if (arqEstadia == NULL)
+  {
+    puts("Nao foi possivel abrir o arquivo! :(");
+  }
+  else
+  {
+    printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
+    fgets(nomeCliente, sizeof(nomeCliente), stdin);
+    pesquisarClienteEstadia(nomeCliente, codCliente);
+    while (fread(&estadia, sizeof(Estadia), 1, arqEstadia) == 1)
+    {
+      if (strcmp(codCliente, estadia.codCliente) == 0)
+      {
+        system("cls");
+        printf("Codigo Cliente: %s", estadia.codCliente);
+        printf("Codigo Estadia: %s", estadia.codigo);
+        printf("Codigo Quarto: %s\n", estadia.codQuarto);
+        printf("Data de entrada: %i\n", estadia.dataEntrada);
+        printf("Data de saída: %i\n", estadia.dataSaida);
+        printf("Quantidade de diarias: %i\n", estadia.quantidadeDiarias);
+        puts("--------------------------------------");
+      }
+    }
+  }
+  fclose(arqEstadia);
+  puts("Pressione qualquer tecla para continuar!");
+  getch();
+}
+
+void pontosFidelidade()
+{
+  system("cls");
+  Estadia estadia;
+  FILE *arqEstadia;
+  char nomeCliente[100], codCliente[100];
+  getchar();
+  arqEstadia = fopen("estadias.txt", "rb");
+  if (arqEstadia == NULL)
+  {
+    puts("Nao foi possivel abrir o arquivo! :(");
+  }
+  else
+  {
+    printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
+    fgets(nomeCliente, sizeof(nomeCliente), stdin);
+    pesquisarClienteEstadia(nomeCliente, codCliente);
+    while (fread(&estadia, sizeof(Estadia), 1, arqEstadia) == 1)
+    {
+      if (strcmp(codCliente, estadia.codCliente) == 0)
+      {
+        system("cls");
+        printf("Codigo Cliente: %s", estadia.codCliente);
+        printf("Codigo Estadia: %s", estadia.codigo);
+        printf("Quantidade de diarias: %i\n", estadia.quantidadeDiarias);
+        printf("Pontos de fidelidade: %i\n", estadia.quantidadeDiarias * 10);
+        puts("--------------------------------------");
+      }
+    }
+  }
+  fclose(arqEstadia);
+  puts("Pressione qualquer tecla para continuar!");
+  getch();
+}
+
 //main
 int main(void)
 {
@@ -524,7 +603,7 @@ int main(void)
     setlocale(LC_ALL,"");
     while(select != 0)
     {
-        puts("\n\nSelecione as opcoes a seguir: \n1 - Cadastrar cliente; \n2 - Cadastrar funcionario; \n3 - Cadastrar quarto; \n4 - Cadastrar estadia; \n5 - Fazer pesquisa de cliente; \n6 - Listar Clientes\n7 - Fazer pesquisa de funcionario; \n8 - Exibir estadias; \n9 - Calcular pontos fidelidade; \n10 - Fazer checkout; \n0 - Sair;\n");
+        puts("\n\nSelecione as opcoes a seguir: \n1 - Cadastrar cliente; \n2 - Cadastrar funcionario; \n3 - Cadastrar quarto; \n4 - Cadastrar estadia; \n5 - Fazer pesquisa de cliente; \n6 - Listar Clientes\n7 - Fazer pesquisa de funcionario; \n8 - Exibir estadias; \n9 - Fazer pesquisa de estadia \n10 - Calcular pontos fidelidade; \n11 - Fazer checkout; \n0 - Sair;\n");
         scanf("%i", &select);
         selectFunctions(select);
     }
