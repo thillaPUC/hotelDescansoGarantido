@@ -147,6 +147,7 @@ void cadastrarEstadia(){
        fwrite(estadia, sizeof(struct Estadia), 1, estadias);
        fclose(estadias);
     }
+    // oi
 
     //todo: mudar status do quarto para ocupado
     //concertar calculo de diarias
