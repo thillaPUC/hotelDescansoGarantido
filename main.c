@@ -8,18 +8,17 @@ void cadastrarEstadia();
 void cadastrarQuarto();
 void cadastrarFuncionario();
 void cadastrarCliente();
-void pesquisarCliente();
-void listarClientes();
-int checarCodigo(char codigo[100]);
 int checarCodigoQuarto(char codigo[100]);
-void cabecalhoClientes(int opcao);
 void pesquisarClienteEstadia(char nomeCliente[], char codCliente[]);
 void pesquisarDadosQuartos(char numHospedes[], char codQuarto[]);
 int verificaMes(int mes);
 void lerEstadia();
+void pesquisarCadastros();
+void listarCadastros();
+int checarCodigo(int tarefa,char codigo[100]);
 
 //function do Menu principal
-enum opcoes {SAIR, CLIENTE, FUNCIONARIO, QUARTO, ESTADIA, PESQUISAR_CLIENTE, LISTAR_CLIENTES, PESQUISAR_FUNCIONARIO, EXIBIR_ESTADIAS, PONTOS_FIDELIDADE, CHECKOUT};
+enum opcoes {SAIR, CLIENTE, FUNCIONARIO, QUARTO, ESTADIA, PESQUISAR_CADASTROS, LISTAR_CADASTROS, EXIBIR_ESTADIAS, PONTOS_FIDELIDADE, CHECKOUT};
 int selectFunctions(int select)
 {
     switch(select)
@@ -40,16 +39,13 @@ int selectFunctions(int select)
         puts("\nCadastrar estadia");
         cadastrarEstadia();
         break;
-    case PESQUISAR_CLIENTE:
-        puts("\nFazer pesquisa de cliente");
-        pesquisarCliente();
+    case PESQUISAR_CADASTROS:
+        puts("\nFazer pesquisa de cadastros");
+        pesquisarCadastros();
         break;
-        case LISTAR_CLIENTES:
-        puts("\nListar clientes");
-        listarClientes();
-        break;
-    case PESQUISAR_FUNCIONARIO:
-        puts("\nFazer pesquisa de funcionario");
+        case LISTAR_CADASTROS:
+        puts("\nListar cadastros");
+        listarCadastros();
         break;
     case EXIBIR_ESTADIAS:
         puts("\nExibir as estadias");
@@ -258,101 +254,74 @@ int checarCodigoQuarto(char codigo[100]){
 }
 
 //function do Cadastro de Funcionarios
-void cadastrarFuncionario(){
-
-
-    char nome[50];
-    char cargo[20];
-    char telefone[20];
-    int codigo = rand();
+typedef struct Funcionario{
+    char codigo[100];
+    char nome[100];
+    int telefone;
+    char cargo[100];
     float salario;
-    int resp;
-
-    do
-    {
-        do
-        {
-            printf("\nDigite seu nome: ");
-            setbuf(stdin, NULL);
-            scanf("%50s", nome);
-        }
-        while( strlen(nome) < 6);
-
-        do
-        {
-            printf("Digite seu cargo: ");
-            setbuf(stdin, NULL);
-            scanf("%20s", cargo);
-        }
-        while( strlen(cargo) < 6);
-
-        do
-        {
-            printf("Digite seu salario: ");
-            setbuf(stdin, NULL);
-            scanf("%f", &salario);
-        }
-        while( salario <= 0);
-
-        do
-        {
-            printf("Digite seu telefone: ");
-            setbuf(stdin, NULL);
-            scanf("%20s", telefone);
-        }
-        while( strlen(telefone) < 6);
-
-        printf("\nCodigo: %d", codigo);
-        printf("\nNome: %s", nome);
-        printf("\nCargo: %s", cargo);
-        printf("\nSalario: %f", salario);
-        printf("\nTelefone: %s", telefone);
-
-        printf("\nPara cadastrar novamente digite 1 para sair digite 2: ");
-        scanf("%d",&resp);
-
+} Funcionario;
+void cadastrarFuncionario(){
+  do{
+      Funcionario funcionario;
+      FILE *arqFuncionario;
+      arqFuncionario = fopen("cadFuncionario.txt", "ab");
+      if(arqFuncionario == NULL){
+        puts("Nao foi possivel abrir o arquivo! :(");
+      }else{
+       getchar();
+      system("cls");
+      puts("Insira o codigo do Funcionario:");
+      fgets(funcionario.codigo, sizeof(funcionario.codigo),stdin);
+      if(checarCodigo(2, funcionario.codigo) == 1){
+        puts("Codigo NAO disponivel!");
+      }else{
+        puts("Digite o nome:");
+        fgets(funcionario.nome, sizeof(funcionario.nome),stdin);
+        puts("Telefone de contato:");
+        scanf("%i", &funcionario.telefone);
+        getchar();
+        puts("Informe o cargo:");
+        fgets(funcionario.cargo, sizeof(funcionario.cargo),stdin);
+        puts("Insira o salario:");
+        scanf("%f", &funcionario.salario);
+        getchar();
+        fseek(arqFuncionario,SEEK_END,1);
+        fwrite(&funcionario, sizeof(Funcionario),1,arqFuncionario);
+        fclose(arqFuncionario);
+        puts("Cadastrar mais funcionarios?\n[S] [N]");
+      }
     }
-    while (resp==1);
-
-    return 0;
+  }while(getchar() == 's');
 }
-
 //functions do Cadastro de Cliente
 typedef struct Endereco{
     char rua[50],cidadeEstado[50];
     int numero;
 } Endereco;
-
 typedef struct Cliente{
     char nome[100];
     char codigo[100];
     int telefone;
     Endereco endereco;
 } Cliente;
-
 void cadastrarCliente(){
-  int scodigo;
   do{
       Cliente cliente;
       FILE *arqCliente;
-      int scodigo;
       arqCliente = fopen("cadCliente.txt", "ab");
       if(arqCliente == NULL){
         puts("Nao foi possivel abrir o arquivo! :(");
       }else{
        getchar();
       system("cls");
-      cabecalhoClientes(1);
       puts("Insira o codigo do cliente:");
       fgets(cliente.codigo, sizeof(cliente.codigo),stdin);
-      scodigo = checarCodigo(cliente.codigo);
-      if(scodigo == 1){
+      if(checarCodigo(1, cliente.codigo) == 1){
         puts("Codigo NAO disponivel!");
       }else{
-        //strcat(cliente.codigo, "#");
         puts("Digite o nome:");
         fgets(cliente.nome, sizeof(cliente.nome),stdin);
-        strcat(cliente.nome, "#");
         puts("Telefone de contato:");
         scanf("%i", &cliente.telefone);
         getchar();
@@ -366,95 +335,189 @@ void cadastrarCliente(){
         fgets(cliente.endereco.cidadeEstado,sizeof(cliente.endereco.cidadeEstado), stdin);
         fseek(arqCliente,SEEK_END,1);
         fwrite(&cliente, sizeof(Cliente),1,arqCliente);
-        fclose(arqCliente);
+        fclose(arqCliente);   
         puts("Cadastrar mais clientes?\n[S] [N]");
       }
     }
   }while(getchar() == 's');
 }
-
-void listarClientes(){
+// Functions de pesquisa
+void listarCadastros(){
   system("cls");
-  cabecalhoClientes(2);
-  Cliente cliente;
-  FILE *arqCliente;
-  arqCliente = fopen("cadCliente.txt", "rb");
-    if(arqCliente == NULL){
-      puts("Nao foi possivel abrir o arquivo! :(");
-      puts("Pressione qualquer tecla para continuar!");
-      getchar();
-    }else{
-      while(fread(&cliente, sizeof(Cliente), 1,arqCliente) == 1){
-        printf("Codigo: %s", cliente.codigo);
-        printf("Nome: %s\n", cliente.nome);
-        printf("Contato: %i\n", cliente.telefone);
-        printf("Rua: %s", cliente.endereco.rua);
-        printf("Numero: %i\n", cliente.endereco.numero);
-        printf("Cidade / Estado: %s", cliente.endereco.cidadeEstado);
-        puts("--------------------------------------");
-      }
-    }
-      puts("Pressione qualquer tecla para continuar!");
-      getch();
-    fclose(arqCliente);
+  getchar();
+  int opcao = 1;
+  puts("[1] - Clientes\n[2] - Funcionarios");
+  scanf("%i", &opcao);
+  getchar();
+  if(opcao == 1){
+      Cliente cliente;
+      FILE *arqCliente;
+      arqCliente = fopen("cadCliente.txt", "rb");
+        if(arqCliente == NULL){
+          system("cls");
+          puts("Nao foi possivel abrir o arquivo! :(");
+          puts("Pressione qualquer tecla para continuar!");
+          getchar();
+        }else{
+          system("cls");
+          while(fread(&cliente, sizeof(Cliente), 1,arqCliente) == 1){
+            printf("Codigo: %s", cliente.codigo);
+            printf("Nome: %s\n", cliente.nome);
+            printf("Contato: %i\n", cliente.telefone);
+            printf("Rua: %s", cliente.endereco.rua);
+            printf("Numero: %i\n", cliente.endereco.numero);
+            printf("Cidade / Estado: %s", cliente.endereco.cidadeEstado);
+            puts("--------------------------------------");
+          }
+        }
+          puts("Pressione qualquer tecla para continuar!");
+          getchar();
+  }else if(opcao == 2){
+      Funcionario funcionario;
+      FILE *arqFuncionario;
+      arqFuncionario = fopen("cadFuncionario.txt", "rb");
+        if(arqFuncionario == NULL){
+          system("cls");
+          puts("Nao foi possivel abrir o arquivo! :(");
+          puts("Pressione qualquer tecla para continuar!");
+          getchar();
+        }else{
+          system("cls");
+          while(fread(&funcionario, sizeof(Funcionario), 1,arqFuncionario) == 1){
+            printf("Codigo: %s", funcionario.codigo);
+            printf("Nome: %s\n", funcionario.nome);
+            printf("Contato: %i\n", funcionario.telefone);
+            printf("Cargo: %s", funcionario.cargo);
+            printf("Salario: R$ %.2f\n", funcionario.salario);
+            puts("--------------------------------------");
+          }
+        }
+          puts("Pressione qualquer tecla para continuar!");
+          getchar();
+          fclose(arqFuncionario);
+  }
 }
-
-void pesquisarCliente(){
-  system("cls");
-  cabecalhoClientes(3);
-  Cliente cliente;
-  FILE *arqCliente;
+void pesquisarCadastros(){
+  int tarefa;
   char pesquisa[100];
   int escolha;
+  puts("[1] - Clientes\n[2] - Funcionarios");
+  scanf("%i", &tarefa);
   getchar();
-  arqCliente = fopen("cadCliente.txt", "rb");
-    if(arqCliente == NULL){
-      puts("Nao foi possivel abrir o arquivo! :(");
-    }else{
-      puts("O que deseja pesquisar?\n[1] - Codigo\n[2] - Nome");
-      scanf("%i", &escolha);
-      getchar();
-      if(escolha == 1){
-        puts("Digite o codigo que deseja pesquisar:");
-        fgets(pesquisa, sizeof(pesquisa), stdin);
-        strcat(pesquisa, "#");
-        while(fread(&cliente, sizeof(Cliente),1,arqCliente) ==1){
-            if(strcmp(pesquisa, cliente.codigo) == 0){
-              system("cls");
-              cabecalhoClientes(3);
-              printf("Codigo: %s", cliente.codigo);
-              printf("Nome: %s\n", cliente.nome);
-              printf("Contato: %i\n", cliente.telefone);
-              printf("Rua: %s", cliente.endereco.rua);
-              printf("Numero: %i\n", cliente.endereco.numero);
-              printf("Cidade / Estado: %s", cliente.endereco.cidadeEstado);
-              puts("--------------------------------------");
-            }
+  if(tarefa == 1){
+      system("cls");
+      Cliente cliente;
+      FILE *arqCliente;
+      arqCliente = fopen("cadCliente.txt", "rb");
+        if(arqCliente == NULL){
+          puts("Nao foi possivel abrir o arquivo! :(");
+        }else{
+          puts("O que deseja pesquisar?\n[1] - Codigo\n[2] - Nome");
+          scanf("%i", &escolha);
+          getchar();
+          if(escolha == 1){
+            puts("Digite o codigo que deseja pesquisar:");
+            fgets(pesquisa, sizeof(pesquisa), stdin);
+            while(fread(&cliente, sizeof(Cliente),1,arqCliente) ==1){
+                if(strcmp(pesquisa, cliente.codigo) == 0){
+                  system("cls");
+                  printf("Codigo: %s", cliente.codigo);
+                  printf("Nome: %s\n", cliente.nome);
+                  printf("Contato: %i\n", cliente.telefone);
+                  printf("Rua: %s", cliente.endereco.rua);
+                  printf("Numero: %i\n", cliente.endereco.numero);
+                  printf("Cidade / Estado: %s", cliente.endereco.cidadeEstado);
+                  puts("--------------------------------------");
+                }
+            }fclose(arqCliente);
+          }else if(escolha == 2){
+            puts("Digite o nome que deseja pesquisar:");
+            fgets(pesquisa, sizeof(pesquisa), stdin);
+            while(fread(&cliente, sizeof(Cliente),1,arqCliente) ==1){
+                if(strcmp(pesquisa, cliente.nome) == 0){
+                  system("cls");
+                  printf("Codigo: %s", cliente.codigo);
+                  printf("Nome: %s\n", cliente.nome);
+                  printf("Contato: %i\n", cliente.telefone);
+                  printf("Rua: %s", cliente.endereco.rua);
+                  printf("Numero: %i\n", cliente.endereco.numero);
+                  printf("Cidade / Estado: %s", cliente.endereco.cidadeEstado);
+                  puts("--------------------------------------");
+                }
+            }fclose(arqCliente);
+          }  
         }
-      }else if(escolha != 1){
-        puts("Digite o nome que deseja pesquisar:");
-        fgets(pesquisa, sizeof(pesquisa), stdin);
-        strcat(pesquisa, "#");
-        while(fread(&cliente, sizeof(Cliente),1,arqCliente) ==1){
-            if(strcmp(pesquisa, cliente.nome) == 0){
-              system("cls");
-              cabecalhoClientes(3);
-              printf("Codigo: %s", cliente.codigo);
-              printf("Nome: %s\n", cliente.nome);
-              printf("Contato: %i\n", cliente.telefone);
-              printf("Rua: %s", cliente.endereco.rua);
-              printf("Numero: %i\n", cliente.endereco.numero);
-              printf("Cidade / Estado: %s", cliente.endereco.cidadeEstado);
-              puts("--------------------------------------");
-            }
-         }
+  }else if(tarefa == 2){
+      system("cls");
+      Funcionario funcionario;
+      FILE *arqFuncionario;
+      arqFuncionario = fopen("cadFuncionario.txt", "rb");
+        if(arqFuncionario == NULL){
+          puts("Nao foi possivel abrir o arquivo! :(");
+        }else{
+          puts("O que deseja pesquisar?\n[1] - Codigo\n[2] - Nome");
+          scanf("%i", &escolha);
+          getchar();
+          if(escolha == 1){
+            puts("Digite o codigo que deseja pesquisar:");
+            fgets(pesquisa, sizeof(pesquisa), stdin);
+            while(fread(&funcionario, sizeof(Funcionario),1,arqFuncionario) == 1){
+                if(strcmp(pesquisa, funcionario.codigo) == 0){
+                  printf("Codigo: %s", funcionario.codigo);
+                  printf("Nome: %s\n", funcionario.nome);
+                  printf("Contato: %i\n", funcionario.telefone);
+                  printf("Cargo: %s", funcionario.cargo);
+                  printf("Salario: R$ %.2f\n", funcionario.salario);
+                  puts("--------------------------------------");
+                }
+            }fclose(arqFuncionario);
+          }else if(escolha == 2){
+            puts("Digite o nome que deseja pesquisar:");
+            fgets(pesquisa, sizeof(pesquisa), stdin);
+            while(fread(&funcionario, sizeof(Funcionario),1,arqFuncionario) == 1){
+                if(strcmp(pesquisa, funcionario.nome) == 0){
+                  printf("Codigo: %s", funcionario.codigo);
+                  printf("Nome: %s\n", funcionario.nome);
+                  printf("Contato: %i\n", funcionario.telefone);
+                  printf("Cargo: %s", funcionario.cargo);
+                  printf("Salario: R$ %.2f\n", funcionario.salario);
+                  puts("--------------------------------------");
+                }
+            }fclose(arqFuncionario);
+          }
       }
-      fclose(arqCliente);
-      puts("Pressione qualquer tecla para continuar!");
-      getch();
     }
+    puts("Pressione qualquer tecla para continuar!");
+    getchar();
 }
 
+
+
+int checarCodigo(int tarefa, char codigo[100]){
+  if(tarefa == 1){
+    Cliente cliente;
+    FILE *arqCliente;
+    arqCliente = fopen("cadCliente.txt", "rb");
+    while(fread(&cliente, sizeof(Cliente),1,arqCliente) ==1){
+        system("cls");
+        if(strcmp(codigo, cliente.codigo) == 0){
+          return 1;
+        }
+          return 0;
+    }
+  }else if(tarefa == 2){
+    Funcionario funcionario;
+    FILE *arqFuncionario;
+    arqFuncionario = fopen("cadCliente.txt", "rb");
+    while(fread(&funcionario, sizeof(Funcionario),1,arqFuncionario) ==1){
+        if(strcmp(codigo, funcionario.codigo) == 0){
+          fclose(arqFuncionario);
+          return 1;
+        }
+          return 0;
+    }
+  }
+}
 void pesquisarClienteEstadia(char nomeCliente[], char codCliente[]){
   Cliente cliente;
   FILE *arqCliente;
@@ -471,52 +534,6 @@ void pesquisarClienteEstadia(char nomeCliente[], char codCliente[]){
       fclose(arqCliente);
     }
 }
-
-int checarCodigo(char codigo[100]){
-    Cliente cliente;
-    FILE *arqCliente;
-    arqCliente = fopen("cadCliente.txt", "rb");
-    while(fread(&cliente, sizeof(Cliente),1,arqCliente) == 1){
-        system("cls");
-        if(strcmp(codigo, cliente.codigo) == 0){
-          fclose(arqCliente);
-          return 1;
-        }else{
-          fclose(arqCliente);
-          return 0;
-    }
-  }
-}
-
-void cabecalhoClientes(int opcao){
-  switch(opcao){
-    case 1:{
-      puts("----------------------------------------");
-      puts("-                                      -");
-      puts("-     AREA DE CADASTRO DE CLIENTES     -");
-      puts("-                                      -");
-      puts("----------------------------------------\n");
-      break;
-    }
-    case 2:{
-      puts("----------------------------------------");
-      puts("-                                      -");
-      puts("-           LISTA DE CLIENTES          -");
-      puts("-                                      -");
-      puts("----------------------------------------\n");
-      break;
-    }
-        case 3:{
-      puts("----------------------------------------");
-      puts("-                                      -");
-      puts("-          PESQUISAR CLIENTES          -");
-      puts("-                                      -");
-      puts("----------------------------------------\n");
-      break;
-    }
-  }
-}
-
 //main
 int main(void)
 {
@@ -525,7 +542,7 @@ int main(void)
     setlocale(LC_ALL,"");
     while(select != 0)
     {
-        puts("\n\nSelecione as opcoes a seguir: \n1 - Cadastrar cliente; \n2 - Cadastrar funcionario; \n3 - Cadastrar quarto; \n4 - Cadastrar estadia; \n5 - Fazer pesquisa de cliente; \n6 - Listar Clientes\n7 - Fazer pesquisa de funcionario; \n8 - Exibir estadias; \n9 - Calcular pontos fidelidade; \n10 - Fazer checkout; \n0 - Sair;\n");
+        puts("\n\nSelecione as opcoes a seguir: \n1 - Cadastrar cliente; \n2 - Cadastrar funcionario; \n3 - Cadastrar quarto; \n4 - Cadastrar estadia; \n5 - Fazer pesquisa; \n6 - Listar Cadastros\n7 - Exibir estadias; \n8 - Calcular pontos fidelidade; \n9 - Fazer checkout; \n0 - Sair;\n");
         scanf("%i", &select);
         selectFunctions(select);
     }
