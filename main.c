@@ -123,8 +123,8 @@ void cadastrarEstadia(){
             calc += totalMes;
         }
         qntDiaria = diaSai+calc;
-    } else if (mesSai == mesEnt){ //nao ta funfando esse
-        calc2 = (mesSai-diaSai);
+    } else if (mesSai == mesEnt){
+        calc2 = totalMes - diaSai;
         qntDiaria = calc-calc2;
     } else {
         qntDiaria = diaSai+calc;
@@ -152,10 +152,8 @@ void cadastrarEstadia(){
        fwrite(estadia, sizeof(struct Estadia), 1, estadias);
        fclose(estadias);
     }
-    // oi
 
     //todo: mudar status do quarto para ocupado
-    //concertar calculo de diarias
 
     lerEstadia();
 };
@@ -344,7 +342,7 @@ void cadastrarCliente(){
         fgets(cliente.endereco.cidadeEstado,sizeof(cliente.endereco.cidadeEstado), stdin);
         fseek(arqCliente,SEEK_END,1);
         fwrite(&cliente, sizeof(Cliente),1,arqCliente);
-        fclose(arqCliente);   
+        fclose(arqCliente);
         puts("Cadastrar mais clientes?\n[S] [N]");
       }
     }
@@ -454,7 +452,7 @@ void pesquisarCadastros(){
                   puts("--------------------------------------");
                 }
             }fclose(arqCliente);
-          }  
+          }
         }
   }else if(tarefa == 2){
       system("cls");
