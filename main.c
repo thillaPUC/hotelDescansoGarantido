@@ -25,7 +25,7 @@ void alterarStatusQuarto(int codigoQuarto);
 void EncerrarEstadia();
 int pesquisarDiariaQuarto(int codigo);
 int validacaoTelefone(int num);
-//function do Menu principal
+
 enum opcoes {SAIR= 0,CADASTRO = 1, CLIENTE = 11, FUNCIONARIO = 12, QUARTO = 13, ESTADIA = 14, PESQUISAR = 2, PESQUISAR_CADASTROS = 21, PESQUISAR_ESTADIA = 22, LISTAR = 3 , LISTAR_CADASTROS = 31, EXIBIR_ESTADIAS = 32, PONTOS_FIDELIDADE = 4, CHECKOUT = 5};
 
 int selectFunctions(int select)
@@ -183,11 +183,8 @@ void cadastrarEstadia()
                 strcpy(estadia->dataEntrada,dataEntrada);
                 strcpy(estadia->dataSaida,dataSaida);
 
-<<<<<<< HEAD
-=======
                 printf("\n Dias de entrada e saida gravados com sucesso\n");
 
->>>>>>> 1b47162a5afedb50e0c047c61fdad9df2ad8f312
                 estadias = fopen("estadias.txt", "ab");
                 if (estadias != NULL)
                 {
@@ -407,7 +404,6 @@ int pesquisarDiariaQuarto(int codigo)
             if(codigo == quarto.codigo)
             {
                 return quarto.valorDiaria;
-                //break;
             }
             fread(&quarto, sizeof(Quarto),1,arquivoQuarto);
         }
@@ -542,14 +538,12 @@ void listarCadastros()
         arqCliente = fopen("cadCliente.txt", "rb");
         if(arqCliente == NULL)
         {
-            //system("cls");
             puts("Nao foi possivel abrir o arquivo! :(");
             puts("Pressione qualquer tecla para continuar!");
             getchar();
         }
         else
         {
-            //system("cls");
             while(fread(&cliente, sizeof(Cliente), 1,arqCliente) == 1)
             {
                 printf("Codigo: %i", cliente.codigo);
@@ -571,14 +565,12 @@ void listarCadastros()
         arqFuncionario = fopen("cadFuncionario.txt", "rb");
         if(arqFuncionario == NULL)
         {
-            //system("cls");
             puts("Nao foi possivel abrir o arquivo! :(");
             puts("Pressione qualquer tecla para continuar!");
             getchar();
         }
         else
         {
-            //system("cls");
             while(fread(&funcionario, sizeof(Funcionario), 1,arqFuncionario) == 1)
             {
                 printf("Codigo: %i", funcionario.codigo);
