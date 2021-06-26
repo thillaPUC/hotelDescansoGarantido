@@ -183,6 +183,11 @@ void cadastrarEstadia()
                 strcpy(estadia->dataEntrada,dataEntrada);
                 strcpy(estadia->dataSaida,dataSaida);
 
+<<<<<<< HEAD
+=======
+                printf("\n Dias de entrada e saida gravados com sucesso\n");
+
+>>>>>>> 1b47162a5afedb50e0c047c61fdad9df2ad8f312
                 estadias = fopen("estadias.txt", "ab");
                 if (estadias != NULL)
                 {
@@ -255,35 +260,44 @@ void EncerrarEstadia()
     {
         printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
         fgets(nomeCliente, sizeof(nomeCliente), stdin);
+        codClienteEstadia = 0;
         codClienteEstadia = pesquisarClienteEstadia(nomeCliente);
-        do
+        if(codClienteEstadia == 0 )
         {
-           if (codClienteEstadia == estadia.codCliente)
-            {
-                codQuartoEstadia = estadia.codQuarto;
-                codigoEstadia = estadia.codigo;
-                diarias = estadia.quantidadeDiarias;
-                break;
-            }
-
-            fread(&estadia, sizeof(Estadia),1,arquivoEstadia);
+            printf("\n Impossivel localizar cliente");
         }
-        while (!feof(arquivoEstadia));
+        else
+        {
 
-        printf("diarias: %d", diarias);
+            do
+            {
+                if (codClienteEstadia == estadia.codCliente)
+                {
+                    codQuartoEstadia = estadia.codQuarto;
+                    codigoEstadia = estadia.codigo;
+                    diarias = estadia.quantidadeDiarias;
+                    break;
+                }
 
-        valorDiaria = pesquisarDiariaQuarto(codQuartoEstadia);
+                fread(&estadia, sizeof(Estadia),1,arquivoEstadia);
+            }
+            while (!feof(arquivoEstadia));
 
-        totalPagar = valorDiaria*diarias;
-        printf("\n O valor total a pagar por %d diarias e de: R$ %.2f reais. \n\n O valor de cada diaria e de: R$ %d\n\n", diarias, totalPagar, valorDiaria);
+            valorDiaria = pesquisarDiariaQuarto(codQuartoEstadia);
 
-        //to do: mudar o status do quarto
-        //to do: retirar essa estadia da lista?
+            totalPagar = valorDiaria*diarias;
+            printf("\n O valor total a pagar por %d diarias e de: R$ %.2f reais. \n\n O valor de cada diaria e de: R$ %d\n\n", diarias, totalPagar, valorDiaria);
+            //to do: mudar o status do quarto
+            //to do: retirar essa estadia da lista?
+        }
+
+        fclose(arquivoEstadia);
+        puts("Pressione qualquer tecla para continuar!");
+        getchar();
+
 
     }
-    fclose(arquivoEstadia);
-    puts("Pressione qualquer tecla para continuar!");
-    getchar();
+
 }
 
 typedef struct Quarto
@@ -310,16 +324,25 @@ void cadastrarQuarto()
             getchar();
             quarto.codigo = gerarCodigo(3);
             printf("\nO codigo gerado para o quarto foi: %d", quarto.codigo);
-            puts("\nDigite a quantidade de hospedes:");
-            scanf("%i", &quarto.quantidadeHospedes);
-            puts("\nDigite o valor da diaria (Valores disponiveis sao: 100, 200 ou 300)");
-            scanf("%i", &quarto.valorDiaria);
+            puts("\nDigite a quantidade de hospedes (Padrao: numero inteiro):");
+            scanf("%d", &quarto.quantidadeHospedes);
             getchar();
-            strcpy(quarto.status, "desocupado");
-            fwrite(&quarto, sizeof(Quarto),1,arqQuarto);
-            fclose(arqQuarto);
-            puts("\nQuarto Cadastrado com sucesso! Voce ja pode utiliza-lo em uma hospedagem!");
-            puts("\nCadastrar mais quartos?\n[S][N]");
+            if(quarto.quantidadeHospedes <= 0){
+                puts("\n Valor inválido");
+            } else {
+                puts("\nDigite o valor da diaria (Padrao: numero inteiro)");
+                scanf("%d", &quarto.valorDiaria);
+                getchar();
+                if(quarto.valorDiaria <= 0){
+                    puts("\n Valor inválido");
+                } else {
+                    strcpy(quarto.status, "desocupado");
+                    fwrite(&quarto, sizeof(Quarto),1,arqQuarto);
+                    fclose(arqQuarto);
+                    puts("\nQuarto Cadastrado com sucesso! Voce ja pode utiliza-lo em uma hospedagem!");
+                    puts("\nCadastrar mais quartos?\n[S][N]");
+                }
+            }
 
         }
     }
@@ -842,7 +865,7 @@ void pesquisarEstadia()
            if (codClienteEstadia == estadia.codCliente)
            {
                 printf("Codigo Cliente: %d\n", estadia.codCliente);
-                printf("Codigo Estadia: %d", estadia.codigo);
+                printf("Codigo Estadia: %d\n", estadia.codigo);
                 printf("Codigo Quarto: %d\n", estadia.codQuarto);
                 printf("Data de entrada: %s\n", estadia.dataEntrada);
                 printf("Data de saída: %s\n", estadia.dataSaida);
@@ -900,7 +923,7 @@ void pontosFidelidade()
 }
 
 void cabecalho(int tarefa){
-    system("cls");   
+    system("cls");
     switch(tarefa)
     {
     case 1:
@@ -938,7 +961,7 @@ void cabecalho(int tarefa){
 int main(void)
 {
     int select = -1;
-    setlocale(LC_ALL,""); 
+    setlocale(LC_ALL,"");
     while(select != 0)
     {
         cabecalho(3);
