@@ -23,11 +23,8 @@ int gerarCodigo(int tarefa);
 //function do Menu principal
 enum opcoes {SAIR, CLIENTE, FUNCIONARIO, QUARTO, ESTADIA, PESQUISAR_CADASTROS, LISTAR_CADASTROS, EXIBIR_ESTADIAS, PESQUISAR_ESTADIA, PONTOS_FIDELIDADE, CHECKOUT};
 
-
-int selectFunctions(int select)
-{
-    switch(select)
-    {
+int selectFunctions(int select){
+    switch(select){
     case CLIENTE:
         puts("\nCadastrar cliente");
         cadastrarCliente();
@@ -75,8 +72,9 @@ int selectFunctions(int select)
     }
     return 0;
 }
+
 //- - - - - - - BP - - - - - - -
-//function do Cadastro de Estadia
+//functions do Cadastro de Estadia
 typedef struct Estadia{
     char codigo[100];
     int codCliente;
@@ -264,7 +262,7 @@ int checarCodigoQuarto(char codigo[100]){
     fclose(arqQuarto);
 }
 
-//function do Cadastro de Funcionarios
+//functions do Cadastro de Funcionarios
 typedef struct Funcionario{
     int codigo;
     char nome[100];
@@ -272,6 +270,7 @@ typedef struct Funcionario{
     char cargo[100];
     float salario;
 } Funcionario;
+
 void cadastrarFuncionario(){
   do{
       Funcionario funcionario;
@@ -298,21 +297,24 @@ void cadastrarFuncionario(){
         fwrite(&funcionario, sizeof(Funcionario),1,arqFuncionario);
         fclose(arqFuncionario);
         puts("Cadastrar mais funcionarios?\n[S] [N]");
-      
+
     }
   }while(getchar() == 's');
 }
+
 //functions do Cadastro de Cliente
 typedef struct Endereco{
     char rua[50],cidadeEstado[50];
     int numero;
 } Endereco;
+
 typedef struct Cliente{
     char nome[100];
     int codigo;
     int telefone;
     Endereco endereco;
 } Cliente;
+
 void cadastrarCliente(){
   do{
       Cliente cliente;
@@ -526,7 +528,6 @@ void pesquisarClienteEstadia(char nomeCliente[], int *codCliente){
     }
 }
 
-
 int gerarCodigo(int tarefa){
   int cod = 1;
   if(tarefa == 1){
@@ -547,8 +548,7 @@ int gerarCodigo(int tarefa){
   return cod;
 }
 
-void pesquisarEstadia()
-{
+void pesquisarEstadia(){
   cabecalho(2);
   struct Estadia *estadia = malloc(sizeof(struct Estadia));
   FILE *arqEstadia;
@@ -586,8 +586,7 @@ void pesquisarEstadia()
   getchar();
 }
 
-void pontosFidelidade()
-{
+void pontosFidelidade(){
   struct Estadia *estadia = malloc(sizeof(struct Estadia));
   FILE *arqEstadia;
   char nomeCliente[100];
@@ -649,13 +648,11 @@ void cabecalho(int tarefa){
 }
 
 //main
-int main(void)
-{
+int main(void){
     //system("cls");
     int select = -1;
     setlocale(LC_ALL,"");
-    while(select != 0)
-    {
+    while(select != 0){
         system("cls");
         cabecalho(3);
         puts("\n\nSelecione as opcoes a seguir: \n1 - Cadastrar cliente; \n2 - Cadastrar funcionario; \n3 - Cadastrar quarto; \n4 - Cadastrar estadia; \n5 - Fazer pesquisa; \n6 - Listar Cadastros\n7 - Exibir estadias; \n8 - Fazer pesquisa de estadia \n9 - Calcular pontos fidelidade; \n10 - Fazer checkout; \n0 - Sair;\n");
