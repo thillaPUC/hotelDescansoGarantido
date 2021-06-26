@@ -184,6 +184,8 @@ void cadastrarEstadia()
                 strcpy(estadia->dataEntrada,dataEntrada);
                 strcpy(estadia->dataSaida,dataSaida);
 
+                printf("\n Dias de entrada e saida gravados com sucesso\n");
+
                 estadias = fopen("estadias.txt", "ab");
                 if (estadias != NULL)
                 {
@@ -256,35 +258,44 @@ void EncerrarEstadia()
     {
         printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
         fgets(nomeCliente, sizeof(nomeCliente), stdin);
+        codClienteEstadia = 0;
         codClienteEstadia = pesquisarClienteEstadia(nomeCliente);
-        do
+        if(codClienteEstadia == 0 )
         {
-           if (codClienteEstadia == estadia.codCliente)
-            {
-                codQuartoEstadia = estadia.codQuarto;
-                codigoEstadia = estadia.codigo;
-                diarias = estadia.quantidadeDiarias;
-                break;
-            }
-
-            fread(&estadia, sizeof(Estadia),1,arquivoEstadia);
+            printf("\n Impossivel localizar cliente");
         }
-        while (!feof(arquivoEstadia));
+        else
+        {
 
-        printf("diarias: %d", diarias);
+            do
+            {
+                if (codClienteEstadia == estadia.codCliente)
+                {
+                    codQuartoEstadia = estadia.codQuarto;
+                    codigoEstadia = estadia.codigo;
+                    diarias = estadia.quantidadeDiarias;
+                    break;
+                }
 
-        valorDiaria = pesquisarDiariaQuarto(codQuartoEstadia);
+                fread(&estadia, sizeof(Estadia),1,arquivoEstadia);
+            }
+            while (!feof(arquivoEstadia));
 
-        totalPagar = valorDiaria*diarias;
-        printf("\n O valor total a pagar por %d diarias e de: R$ %.2f reais. \n\n O valor de cada diaria e de: R$ %d\n\n", diarias, totalPagar, valorDiaria);
+            valorDiaria = pesquisarDiariaQuarto(codQuartoEstadia);
 
-        //to do: mudar o status do quarto
-        //to do: retirar essa estadia da lista?
+            totalPagar = valorDiaria*diarias;
+            printf("\n O valor total a pagar por %d diarias e de: R$ %.2f reais. \n\n O valor de cada diaria e de: R$ %d\n\n", diarias, totalPagar, valorDiaria);
+            //to do: mudar o status do quarto
+            //to do: retirar essa estadia da lista?
+        }
+
+        fclose(arquivoEstadia);
+        puts("Pressione qualquer tecla para continuar!");
+        getchar();
+
 
     }
-    fclose(arquivoEstadia);
-    puts("Pressione qualquer tecla para continuar!");
-    getchar();
+
 }
 
 //functions do Cadastro de Quartos
