@@ -25,49 +25,48 @@ void EncerrarEstadia();
 int pesquisarDiariaQuarto(int codigo);
 
 //function do Menu principal
-enum opcoes {SAIR, CLIENTE, FUNCIONARIO, QUARTO, ESTADIA, PESQUISAR_CADASTROS, LISTAR_CADASTROS, EXIBIR_ESTADIAS, PESQUISAR_ESTADIA, PONTOS_FIDELIDADE, CHECKOUT};
+enum opcoes {SAIR= 0,CADASTRO = 1, CLIENTE = 11, FUNCIONARIO = 12, QUARTO = 13, ESTADIA = 14, PESQUISAR = 2, PESQUISAR_CADASTROS = 21, PESQUISAR_ESTADIA = 22, LISTAR = 3 , LISTAR_CADASTROS = 31, EXIBIR_ESTADIAS = 32, PONTOS_FIDELIDADE = 4, CHECKOUT = 5};
 
 int selectFunctions(int select)
 {
     switch(select)
     {
-    case CLIENTE:
-        puts("\nCadastrar cliente");
-        cadastrarCliente();
+    case CADASTRO:
+        cabecalho(1);
+        puts("[11] - Cliente\n[12] - Funcionario\n[13] - Quarto\n[14] - Estadia\n[0] - Voltar");
+        scanf("%i",&select);
+        switch(select){
+            case CLIENTE: cadastrarCliente(); break;
+            case FUNCIONARIO: cadastrarFuncionario(); break;
+            case QUARTO: cadastrarQuarto(); break;
+            case ESTADIA: cadastrarEstadia(); break;
+            default: cabecalho(3);break;
+        }
         break;
-    case FUNCIONARIO:
-        puts("\nCadastrar funcionario");
-        cadastrarFuncionario();
+    case PESQUISAR:
+        cabecalho(2);
+        puts("[21] - Clientes/Funcionarios\n[22] - Estadia\n[0] - Voltar");
+        scanf("%i",&select);
+        switch(select){
+            case PESQUISAR_CADASTROS: pesquisarCadastros(); break;
+            case PESQUISAR_ESTADIA: pesquisarEstadia(); break;
+            default: cabecalho(3);break;
+        }
         break;
-    case QUARTO:
-        puts("\nCadastrar quarto");
-        cadastrarQuarto();
-        break;
-    case ESTADIA:
-        puts("\nCadastrar estadia");
-        cadastrarEstadia();
-        break;
-    case PESQUISAR_CADASTROS:
-        puts("\nFazer pesquisa de cadastros");
-        pesquisarCadastros();
-        break;
-    case LISTAR_CADASTROS:
-        puts("\nListar cadastros");
-        listarCadastros();
-        break;
-    case EXIBIR_ESTADIAS:
-        puts("\nExibir as estadias NADA AQUI");
-        break;
-    case PESQUISAR_ESTADIA:
-        puts("\nFazer pesquisa de estadia");
-        pesquisarEstadia();
+    case LISTAR:
+        cabecalho(4);
+        puts("[31] - Clientes/Funcionarios\n[32] - Estadia\n[0] - Voltar");
+        scanf("%i",&select);
+        switch(select){
+            case LISTAR_CADASTROS: listarCadastros(); break;
+            case EXIBIR_ESTADIAS:/*  exibirEstadias(); */ break;
+            default: cabecalho(3);break;
+        }
         break;
     case PONTOS_FIDELIDADE:
-        puts("\nCalcular pontos fidelidade");
         pontosFidelidade();
         break;
     case CHECKOUT:
-        puts("\nEncerrar uma Estadia");
         EncerrarEstadia();
         break;
     case SAIR:
@@ -312,7 +311,7 @@ void cadastrarQuarto()
         {
             getchar();
             quarto.codigo = gerarCodigo(3);
-            printf("\nO codigo gerado para o funcionario foi: %d", quarto.codigo);
+            printf("\nO codigo gerado para o quarto foi: %d", quarto.codigo);
             puts("\nDigite a quantidade de hospedes:");
             scanf("%i", &quarto.quantidadeHospedes);
             puts("\nDigite o valor da diaria (Valores disponiveis sao: 100, 200 ou 300)");
@@ -415,6 +414,7 @@ void cadastrarFuncionario()
         arqFuncionario = fopen("cadFuncionario.txt", "ab");
         if(arqFuncionario == NULL)
         {
+            cabecalho(1);
             puts("Nao foi possivel abrir o arquivo! :(");
         }
         else
@@ -500,7 +500,6 @@ void cadastrarCliente()
 // Lista cadastro de funcionario ou cliente
 void listarCadastros()
 {
-    system("cls");
     cabecalho(2);
     getchar();
     int opcao = 1;
@@ -580,7 +579,6 @@ void pesquisarCadastros()
     getchar();
     if(tarefa == 1)
     {
-        system("cls");
         cabecalho(2);
         Cliente cliente;
         FILE *arqCliente;
@@ -623,7 +621,7 @@ void pesquisarCadastros()
                 {
                     if(strcmp(pesquisa, cliente.nome) == 0)
                     {
-                        system("cls");
+
                         cabecalho(2);
                         printf("Codigo: #%i  ", cliente.codigo);
                         printf("Nome: %s\n", cliente.nome);
@@ -640,7 +638,6 @@ void pesquisarCadastros()
     }
     else if(tarefa == 2)
     {
-        system("cls");
         cabecalho(2);
         Funcionario funcionario;
         FILE *arqFuncionario;
@@ -656,7 +653,6 @@ void pesquisarCadastros()
             getchar();
             if(escolha == 1)
             {
-                system("cls");
                 cabecalho(2);
                 puts("Digite o codigo que deseja pesquisar:");
                 fgets(pesquisa, sizeof(pesquisa), stdin);
@@ -676,7 +672,6 @@ void pesquisarCadastros()
             }
             else if(escolha == 2)
             {
-                system("cls");
                 cabecalho(2);
                 puts("Digite o nome que deseja pesquisar:");
                 fgets(pesquisa, sizeof(pesquisa), stdin);
@@ -903,8 +898,8 @@ void pontosFidelidade()
     getchar();
 }
 
-void cabecalho(int tarefa)
-{
+void cabecalho(int tarefa){
+    system("cls");   
     switch(tarefa)
     {
     case 1:
@@ -927,7 +922,15 @@ void cabecalho(int tarefa)
         puts("*              Hotel Descanso           *");
         puts("*                Garantido              *");
         puts("*                                       *");
+        puts("*****************************************\n");
+        break;
+    case 4:
         puts("*****************************************");
+        puts("*                                       *");
+        puts("*                 Listas                *");
+        puts("*                                       *");
+        puts("*****************************************");
+        break;
     }
 }
 
@@ -935,12 +938,11 @@ void cabecalho(int tarefa)
 int main(void)
 {
     int select = -1;
-    setlocale(LC_ALL,"");
+    setlocale(LC_ALL,""); 
     while(select != 0)
     {
-        system("cls");
         cabecalho(3);
-        puts("\n\nSelecione as opcoes a seguir: \n1 - Cadastrar cliente; \n2 - Cadastrar funcionario; \n3 - Cadastrar quarto; \n4 - Cadastrar estadia; \n5 - Fazer pesquisa; \n6 - Listar Cadastros\n7 - Exibir estadias; \n8 - Fazer pesquisa de estadia \n9 - Calcular pontos fidelidade; \n10 - Encerrar uma Estadia; \n0 - Sair;\n");
+        puts("[1] - Cadastros\n[2] - Pesquisar\n[3] - Todos os cadastros\n[4] - Pontos fidelidade\n[5] - Checkout\n[0] - Sair");
         scanf("%i", &select);
         selectFunctions(select);
     }
