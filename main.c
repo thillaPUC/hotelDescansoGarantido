@@ -418,7 +418,7 @@ typedef struct Funcionario
     char nome[100];
     int telefone;
     char cargo[100];
-    float salario;
+    int salario;
 } Funcionario;
 
 void cadastrarFuncionario()
@@ -448,7 +448,7 @@ void cadastrarFuncionario()
             do{
                 cabecalho(1);
                 puts("\nInforme o cargo:");
-                puts("[1] - Recepcionista\n[2] - Auxiliar de limpeza\n[3] - Garçom\n[4] - Gerente");
+                puts("[1] - Recepcionista\n[2] - Auxiliar de limpeza\n[3] - Garcom\n[4] - Gerente");
                 scanf("%i",&cargo);
                 switch(cargo){
                     case 1: strcpy(funcionario.cargo,"Recepcionista     "); break;
@@ -457,9 +457,10 @@ void cadastrarFuncionario()
                     case 4: strcpy(funcionario.cargo,"Gerente   "); break;
                     default:puts("Cargo nao reconhecido!"); sleep(2);
                 }
-            }while(cargo != 1 || cargo != 2 || cargo != 3 || cargo != 4);
+            }while(cargo > 4 || cargo < 1);
+            getchar();
             puts("\nInsira o salario:");
-            scanf("%.2f", &funcionario.salario);
+            scanf("%i", &funcionario.salario);
             getchar();
             fseek(arqFuncionario,SEEK_END,1);
             fwrite(&funcionario, sizeof(Funcionario),1,arqFuncionario);
@@ -546,7 +547,7 @@ void listarCadastros()
         {
             while(fread(&cliente, sizeof(Cliente), 1,arqCliente) == 1)
             {
-                printf("Codigo: %i", cliente.codigo);
+                printf("Codigo: %i  ", cliente.codigo);
                 printf("Nome: %s\n", cliente.nome);
                 printf("Contato: %i\n", cliente.telefone);
                 printf("Rua: %s", cliente.endereco.rua);
@@ -641,7 +642,6 @@ void pesquisarCadastros()
                 {
                     if(strcmp(pesquisa, cliente.nome) == 0)
                     {
-
                         cabecalho(2);
                         printf("Codigo: #%i  ", cliente.codigo);
                         printf("Nome: %s\n", cliente.nome);
@@ -675,16 +675,16 @@ void pesquisarCadastros()
             {
                 cabecalho(2);
                 puts("Digite o codigo que deseja pesquisar:");
-                fgets(pesquisa, sizeof(pesquisa), stdin);
+                scanf("%i", &codigo);
                 while(fread(&funcionario, sizeof(Funcionario),1,arqFuncionario) == 1)
                 {
-                    if(strcmp(pesquisa, funcionario.codigo) == 0)
+                    if(codigo == funcionario.codigo)
                     {
                         printf("Codigo: #%i  ", funcionario.codigo);
                         printf("Nome: %s\n", funcionario.nome);
                         printf("Contato: %i\n", funcionario.telefone);
                         printf("Cargo: %s", funcionario.cargo);
-                        printf("Salario: R$ %.2f\n", funcionario.salario);
+                        printf("Salario: R$ %i,00\n", funcionario.salario);
                         puts("--------------------------------------");
                     }
                 }
@@ -703,7 +703,7 @@ void pesquisarCadastros()
                         printf("Nome: %s\n", funcionario.nome);
                         printf("Contato: %i\n", funcionario.telefone);
                         printf("Cargo: %s", funcionario.cargo);
-                        printf("Salario: R$ %.2f\n", funcionario.salario);
+                        printf("Salario: R$ %i,00\n", funcionario.salario);
                         puts("--------------------------------------");
                     }
                 }
