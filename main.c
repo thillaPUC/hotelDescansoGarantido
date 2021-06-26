@@ -3,6 +3,7 @@
 #include <locale.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 
 void cadastrarEstadia();
 void cadastrarQuarto();
@@ -23,7 +24,7 @@ int calcularQntdeDiarias(char entrada[6], char saida[6]);
 void alterarStatusQuarto(int codigoQuarto);
 void EncerrarEstadia();
 int pesquisarDiariaQuarto(int codigo);
-
+int validacaoTelefone(int num);
 //function do Menu principal
 enum opcoes {SAIR= 0,CADASTRO = 1, CLIENTE = 11, FUNCIONARIO = 12, QUARTO = 13, ESTADIA = 14, PESQUISAR = 2, PESQUISAR_CADASTROS = 21, PESQUISAR_ESTADIA = 22, LISTAR = 3 , LISTAR_CADASTROS = 31, EXIBIR_ESTADIAS = 32, PONTOS_FIDELIDADE = 4, CHECKOUT = 5};
 
@@ -79,8 +80,6 @@ int selectFunctions(int select)
     return 0;
 }
 
-//- - - - - - - BP - - - - - - -
-//functions do Cadastro de Estadia
 typedef struct Estadia
 {
     int codigo;
@@ -184,8 +183,11 @@ void cadastrarEstadia()
                 strcpy(estadia->dataEntrada,dataEntrada);
                 strcpy(estadia->dataSaida,dataSaida);
 
+<<<<<<< HEAD
+=======
                 printf("\n Dias de entrada e saida gravados com sucesso\n");
 
+>>>>>>> 1b47162a5afedb50e0c047c61fdad9df2ad8f312
                 estadias = fopen("estadias.txt", "ab");
                 if (estadias != NULL)
                 {
@@ -298,7 +300,6 @@ void EncerrarEstadia()
 
 }
 
-//functions do Cadastro de Quartos
 typedef struct Quarto
 {
     int codigo;
@@ -415,7 +416,6 @@ int pesquisarDiariaQuarto(int codigo)
     }
 }
 
-//functions do Cadastro de Funcionarios
 typedef struct Funcionario
 {
     int codigo;
@@ -439,31 +439,41 @@ void cadastrarFuncionario()
         }
         else
         {
+            int cargo = 0;
             cabecalho(1);
             getchar();
             funcionario.codigo = gerarCodigo(2);
             printf("\nO codigo gerado para o funcionario foi: %d", funcionario.codigo);
             puts("\nDigite o nome:");
             fgets(funcionario.nome, sizeof(funcionario.nome),stdin);
-            puts("\nTelefone de contato:");
-            scanf("%i", &funcionario.telefone);
+                puts("\nTelefone de contato:");
+                scanf("%i", &funcionario.telefone);
             getchar();
-            puts("\nInforme o cargo:");
-            fgets(funcionario.cargo, sizeof(funcionario.cargo),stdin);
+            do{
+                cabecalho(1);
+                puts("\nInforme o cargo:");
+                puts("[1] - Recepcionista\n[2] - Auxiliar de limpeza\n[3] - Garçom\n[4] - Gerente");
+                scanf("%i",&cargo);
+                switch(cargo){
+                    case 1: strcpy(funcionario.cargo,"Recepcionista     "); break;
+                    case 2: strcpy(funcionario.cargo,"Auxiliar de Limpeza   "); break;
+                    case 3: strcpy(funcionario.cargo,"Garcom    "); break;
+                    case 4: strcpy(funcionario.cargo,"Gerente   "); break;
+                    default:puts("Cargo nao reconhecido!"); sleep(2);
+                }
+            }while(cargo != 1 || cargo != 2 || cargo != 3 || cargo != 4);
             puts("\nInsira o salario:");
-            scanf("%f", &funcionario.salario);
+            scanf("%.2f", &funcionario.salario);
             getchar();
             fseek(arqFuncionario,SEEK_END,1);
             fwrite(&funcionario, sizeof(Funcionario),1,arqFuncionario);
             fclose(arqFuncionario);
             puts("\nCadastrar mais funcionarios?\n[S] [N]");
-
         }
     }
     while(getchar() == 's');
 }
 
-//functions do Cadastro de Cliente
 typedef struct Endereco
 {
     char rua[50],cidadeEstado[50];
@@ -517,7 +527,6 @@ void cadastrarCliente()
     while(getchar() == 's');
 }
 
-// Lista cadastro de funcionario ou cliente
 void listarCadastros()
 {
     cabecalho(2);
@@ -586,7 +595,6 @@ void listarCadastros()
     }
 }
 
-//pesquisa de cliente e funcionario
 void pesquisarCadastros()
 {
     int tarefa;
@@ -715,7 +723,6 @@ void pesquisarCadastros()
     getchar();
 }
 
-//pesquisa de codigo do cliente pelo nome do cliente
 int pesquisarClienteEstadia(char nomeCliente[])
 {
     Cliente cliente;
@@ -749,7 +756,6 @@ int pesquisarClienteEstadia(char nomeCliente[])
     }
 }
 
-//gerador de codigo automatico
 int gerarCodigo(int tarefa)
 {
     int cod = 1;
@@ -836,7 +842,6 @@ int gerarCodigo(int tarefa)
     return cod;
 }
 
-//pesquisa das estadias existentes para um cliente
 void pesquisarEstadia()
 {
     cabecalho(2);
@@ -879,7 +884,6 @@ void pesquisarEstadia()
     getchar();
 }
 
-//calculo dos pontos de fidelidade de um cliente
 void pontosFidelidade()
 {
     Estadia estadia;
@@ -954,7 +958,6 @@ void cabecalho(int tarefa){
     }
 }
 
-//main
 int main(void)
 {
     int select = -1;
@@ -968,6 +971,3 @@ int main(void)
     }
     return 0;
 }
-
-
-
