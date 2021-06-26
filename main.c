@@ -24,7 +24,9 @@ int calcularQntdeDiarias(char entrada[6], char saida[6]);
 void alterarStatusQuarto(int codigoQuarto);
 void EncerrarEstadia();
 int pesquisarDiariaQuarto(int codigo);
-int validacaoTelefone(int num);
+int validacaoStringCliente(char string[100]);
+int validacaoTelefoneCliente(int num);
+
 
 enum opcoes {SAIR= 0,CADASTRO = 1, CLIENTE = 11, FUNCIONARIO = 12, QUARTO = 13, ESTADIA = 14, PESQUISAR = 2, PESQUISAR_CADASTROS = 21, PESQUISAR_ESTADIA = 22, LISTAR = 3 , LISTAR_CADASTROS = 31, EXIBIR_ESTADIAS = 32, PONTOS_FIDELIDADE = 4, CHECKOUT = 5};
 
@@ -502,19 +504,25 @@ void cadastrarCliente()
             cabecalho(1);
             cliente.codigo = gerarCodigo(1);
             printf("\nO codigo gerado para o cliente foi: %d", cliente.codigo);
-            puts("\nDigite o nome:");
-            fgets(cliente.nome, sizeof(cliente.nome),stdin);
+            do{
+                puts("\nDigite o nome:");
+                fgets(cliente.nome, sizeof(cliente.nome),stdin);
+            }while(validacaoString(cliente.nome) < 1);
             puts("Telefone de contato:");
             scanf("%i", &cliente.telefone);
             getchar();
-            puts("\n*-!-Endereco-!-*");
-            puts("Digite a rua:");
-            fgets(cliente.endereco.rua,sizeof(cliente.endereco.rua), stdin);
+            puts("*-!-Endereco-!-*");
+            do{
+                puts("Digite a rua:");
+                fgets(cliente.endereco.rua,sizeof(cliente.endereco.rua), stdin);
+            }while(validacaoString(cliente.endereco.rua) < 1);
             puts("Numero:");
             scanf("%i", &cliente.endereco.numero);
             getchar();
-            puts("Insira a cidade e o estado\n\nex:Belo Horizonte MG:");
-            fgets(cliente.endereco.cidadeEstado,sizeof(cliente.endereco.cidadeEstado), stdin);
+            do{
+                puts("\nInsira a cidade e o estado\nex:Belo Horizonte MG:");
+                fgets(cliente.endereco.cidadeEstado,sizeof(cliente.endereco.cidadeEstado), stdin);
+            }while(validacaoString(cliente.endereco.cidadeEstado) < 1);
             fseek(arqCliente,SEEK_END,1);
             fwrite(&cliente, sizeof(Cliente),1,arqCliente);
             fclose(arqCliente);
@@ -522,6 +530,23 @@ void cadastrarCliente()
         }
     }
     while(getchar() == 's');
+}
+
+int validacaoString(char string[100]){
+    int i = 0, error = 0; char letra;
+    while(string[i] != '\0'){
+        letra = string[i];
+        if((letra >= 'a' && letra <= 'z') || (letra >= 'A' && letra <= 'Z') || (letra == 32)){
+        }else{
+            error++;
+        }
+        i++;
+    }
+    if(error > 1){
+        puts("Caractere Invalido!");
+        return 0;
+    }else
+    return 1;
 }
 
 void listarCadastros()
