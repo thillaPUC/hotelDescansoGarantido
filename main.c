@@ -9,7 +9,7 @@ void cadastrarQuarto();
 void cadastrarFuncionario();
 void cadastrarCliente();
 int checarCodigoQuarto(char codigo[100]);
-void pesquisarClienteEstadia(char nomeCliente[], char codCliente[]);
+void pesquisarClienteEstadia(char nomeCliente[], int *codCliente);
 void pesquisarDadosQuartos(char numHospedes[], char codQuarto[]);
 int verificaMes(int mes);
 void lerEstadia();
@@ -17,7 +17,8 @@ void pesquisarEstadia();
 void pontosFidelidade();
 void pesquisarCadastros();
 void listarCadastros();
-int checarCodigo(int tarefa,char codigo[100]);
+/* int checarCodigo(int tarefa,char codigo[100]); */
+int gerarCodigo(int tarefa);
 
 //function do Menu principal
 enum opcoes {SAIR, CLIENTE, FUNCIONARIO, QUARTO, ESTADIA, PESQUISAR_CADASTROS, LISTAR_CADASTROS, EXIBIR_ESTADIAS, PESQUISAR_ESTADIA, PONTOS_FIDELIDADE, CHECKOUT};
@@ -74,11 +75,11 @@ int selectFunctions(int select)
     }
     return 0;
 }
-
+//- - - - - - - BP - - - - - - -
 //function do Cadastro de Estadia
 typedef struct Estadia{
     char codigo[100];
-    char codCliente[100];
+    int codCliente;
     char codQuarto[100];
     int quantidadeDiarias;
     char dataEntrada[100];
@@ -86,8 +87,8 @@ typedef struct Estadia{
 } Estadia;
 
 void cadastrarEstadia(){
-    int i, calc, calc2, totalMes, diaEnt, mesEnt, diaSai, mesSai, qntDiaria;
-    char codEstadia[100], nomeCliente[100], codCliente[100], numHospedes[100], codQuarto[5], dataEntrada[6], dataSaida[6], str[4];
+    int i, calc, calc2, totalMes, diaEnt, mesEnt, diaSai, mesSai, qntDiaria, *codCliente;
+    char codEstadia[100], nomeCliente[100], numHospedes[100], codQuarto[5], dataEntrada[6], dataSaida[6], str[4];
     FILE *estadias;
     struct Estadia *estadia = malloc(sizeof(struct Estadia));
 
@@ -98,8 +99,8 @@ void cadastrarEstadia(){
 
     printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
     fgets(nomeCliente, sizeof(nomeCliente), stdin);
-    pesquisarClienteEstadia(nomeCliente, codCliente);
-    strcpy(estadia->codCliente,codCliente);
+    pesquisarClienteEstadia(nomeCliente, &codCliente);
+    estadia->codCliente = codCliente;
 
     printf("\n Informe o numero total de hospedes:\n");
     fgets(numHospedes, sizeof(numHospedes), stdin);
@@ -107,10 +108,10 @@ void cadastrarEstadia(){
     strcpy(estadia->codQuarto,codQuarto);
 
     printf("\nSo aceitando reservas para o ano corrente.\n");
-    printf("\n Informe o dia e, em seguida, o mes da data de chegada (Obs.: nao coloque 0 na frente do algorismo):\n");
+    printf("\n Informe o dia e, em seguida, o mes da data de chegada (Obs.: nao coloque 0 na frente do algarismo):\n");
     scanf("%d %d", &diaEnt, &mesEnt);
 
-    printf("\n Informe o dia e, em seguida, o mes da data de saida (Obs.: nao coloque 0 na frente do algorismo):\n");
+    printf("\n Informe o dia e, em seguida, o mes da data de saida (Obs.: nao coloque 0 na frente do algarismo):\n");
     scanf("%d %d", &diaSai, &mesSai);
 
     qntDiaria = 0;
@@ -123,8 +124,8 @@ void cadastrarEstadia(){
             calc += totalMes;
         }
         qntDiaria = diaSai+calc;
-    } else if (mesSai == mesEnt){ //nao ta funfando esse
-        calc2 = (mesSai-diaSai);
+    } else if (mesSai == mesEnt){
+        calc2 = totalMes - diaSai;
         qntDiaria = calc-calc2;
     } else {
         qntDiaria = diaSai+calc;
@@ -152,10 +153,8 @@ void cadastrarEstadia(){
        fwrite(estadia, sizeof(struct Estadia), 1, estadias);
        fclose(estadias);
     }
-    // oi
 
     //todo: mudar status do quarto para ocupado
-    //concertar calculo de diarias
 
     lerEstadia();
 };
@@ -167,7 +166,8 @@ void lerEstadia(){
         fread(estadia, sizeof(struct Estadia), 1, file);
         fclose(file);
     }
-    printf("\nCodigo:%s\nCliente:%s\nQuarto:%s\nDias:%d\nEntrada:%s\nSaida:%s\n",estadia->codigo, estadia->codCliente,estadia->codQuarto,estadia->quantidadeDiarias, estadia->dataEntrada, estadia->dataSaida);
+    printf("\nCodigo:%s\nCliente:%i\nQuarto:%s\nDias:%d\nEntrada:%s\nSaida:%s\n",estadia->codigo, estadia->codCliente,estadia->codQuarto,estadia->quantidadeDiarias, estadia->dataEntrada, estadia->dataSaida);
+    getchar();
 }
 
 int verificaMes(int mes){
@@ -264,7 +264,7 @@ int checarCodigoQuarto(char codigo[100]){
 
 //function do Cadastro de Funcionarios
 typedef struct Funcionario{
-    char codigo[100];
+    int codigo;
     char nome[100];
     int telefone;
     char cargo[100];
@@ -279,12 +279,13 @@ void cadastrarFuncionario(){
         puts("Nao foi possivel abrir o arquivo! :(");
       }else{
        getchar();
-      system("cls");
-      puts("Insira o codigo do Funcionario:");
+      //system("cls");
+     /*  puts("Insira o codigo do Funcionario:");
       fgets(funcionario.codigo, sizeof(funcionario.codigo),stdin);
       if(checarCodigo(2, funcionario.codigo) == 1){
         puts("Codigo NAO disponivel!");
-      }else{
+      }else{ */
+        funcionario.codigo = gerarCodigo(2);
         puts("Digite o nome:");
         fgets(funcionario.nome, sizeof(funcionario.nome),stdin);
         puts("Telefone de contato:");
@@ -299,7 +300,7 @@ void cadastrarFuncionario(){
         fwrite(&funcionario, sizeof(Funcionario),1,arqFuncionario);
         fclose(arqFuncionario);
         puts("Cadastrar mais funcionarios?\n[S] [N]");
-      }
+      
     }
   }while(getchar() == 's');
 }
@@ -310,7 +311,7 @@ typedef struct Endereco{
 } Endereco;
 typedef struct Cliente{
     char nome[100];
-    char codigo[100];
+    int codigo;
     int telefone;
     Endereco endereco;
 } Cliente;
@@ -323,13 +324,14 @@ void cadastrarCliente(){
         puts("Nao foi possivel abrir o arquivo! :(");
       }else{
        getchar();
-      system("cls");
-      puts("Insira o codigo do cliente:");
+      //system("cls");
+/*      puts("Insira o codigo do cliente:");
       fgets(cliente.codigo, sizeof(cliente.codigo),stdin);
-      if(checarCodigo(1, cliente.codigo) == 1){
+       if(checarCodigo(1, cliente.codigo) == 1){
         puts("Codigo NAO disponivel!");
-      }else{
-        puts("Digite o nome:");
+      }else{ */
+        cliente.codigo = gerarCodigo(1);
+        puts("\nDigite o nome:");
         fgets(cliente.nome, sizeof(cliente.nome),stdin);
         puts("Telefone de contato:");
         scanf("%i", &cliente.telefone);
@@ -344,15 +346,15 @@ void cadastrarCliente(){
         fgets(cliente.endereco.cidadeEstado,sizeof(cliente.endereco.cidadeEstado), stdin);
         fseek(arqCliente,SEEK_END,1);
         fwrite(&cliente, sizeof(Cliente),1,arqCliente);
-        fclose(arqCliente);   
+        fclose(arqCliente);
         puts("Cadastrar mais clientes?\n[S] [N]");
       }
-    }
-  }while(getchar() == 's');
-}
+    }while(getchar() == 's');
+  }
+
 // Functions de pesquisa
 void listarCadastros(){
-  system("cls");
+  //system("cls");
   getchar();
   int opcao = 1;
   puts("[1] - Clientes\n[2] - Funcionarios");
@@ -363,14 +365,14 @@ void listarCadastros(){
       FILE *arqCliente;
       arqCliente = fopen("cadCliente.txt", "rb");
         if(arqCliente == NULL){
-          system("cls");
+          //system("cls");
           puts("Nao foi possivel abrir o arquivo! :(");
           puts("Pressione qualquer tecla para continuar!");
           getchar();
         }else{
-          system("cls");
+          //system("cls");
           while(fread(&cliente, sizeof(Cliente), 1,arqCliente) == 1){
-            printf("Codigo: %s", cliente.codigo);
+            printf("Codigo: %i", cliente.codigo);
             printf("Nome: %s\n", cliente.nome);
             printf("Contato: %i\n", cliente.telefone);
             printf("Rua: %s", cliente.endereco.rua);
@@ -386,14 +388,14 @@ void listarCadastros(){
       FILE *arqFuncionario;
       arqFuncionario = fopen("cadFuncionario.txt", "rb");
         if(arqFuncionario == NULL){
-          system("cls");
+          //system("cls");
           puts("Nao foi possivel abrir o arquivo! :(");
           puts("Pressione qualquer tecla para continuar!");
           getchar();
         }else{
-          system("cls");
+          //system("cls");
           while(fread(&funcionario, sizeof(Funcionario), 1,arqFuncionario) == 1){
-            printf("Codigo: %s", funcionario.codigo);
+            printf("Codigo: %i", funcionario.codigo);
             printf("Nome: %s\n", funcionario.nome);
             printf("Contato: %i\n", funcionario.telefone);
             printf("Cargo: %s", funcionario.cargo);
@@ -406,15 +408,17 @@ void listarCadastros(){
           fclose(arqFuncionario);
   }
 }
+
 void pesquisarCadastros(){
   int tarefa;
   char pesquisa[100];
   int escolha;
+  int codigo;
   puts("[1] - Clientes\n[2] - Funcionarios");
   scanf("%i", &tarefa);
   getchar();
   if(tarefa == 1){
-      system("cls");
+      //system("cls");
       Cliente cliente;
       FILE *arqCliente;
       arqCliente = fopen("cadCliente.txt", "rb");
@@ -426,11 +430,11 @@ void pesquisarCadastros(){
           getchar();
           if(escolha == 1){
             puts("Digite o codigo que deseja pesquisar:");
-            fgets(pesquisa, sizeof(pesquisa), stdin);
+            scanf("%i", &codigo);
             while(fread(&cliente, sizeof(Cliente),1,arqCliente) ==1){
-                if(strcmp(pesquisa, cliente.codigo) == 0){
-                  system("cls");
-                  printf("Codigo: %s", cliente.codigo);
+                if(codigo == cliente.codigo){
+                  //system("cls");
+                  printf("Codigo: #%i  ", cliente.codigo);
                   printf("Nome: %s\n", cliente.nome);
                   printf("Contato: %i\n", cliente.telefone);
                   printf("Rua: %s", cliente.endereco.rua);
@@ -444,8 +448,8 @@ void pesquisarCadastros(){
             fgets(pesquisa, sizeof(pesquisa), stdin);
             while(fread(&cliente, sizeof(Cliente),1,arqCliente) ==1){
                 if(strcmp(pesquisa, cliente.nome) == 0){
-                  system("cls");
-                  printf("Codigo: %s", cliente.codigo);
+                  //system("cls");
+                  printf("Codigo: #%i  ", cliente.codigo);
                   printf("Nome: %s\n", cliente.nome);
                   printf("Contato: %i\n", cliente.telefone);
                   printf("Rua: %s", cliente.endereco.rua);
@@ -454,10 +458,10 @@ void pesquisarCadastros(){
                   puts("--------------------------------------");
                 }
             }fclose(arqCliente);
-          }  
+          }
         }
   }else if(tarefa == 2){
-      system("cls");
+      //system("cls");
       Funcionario funcionario;
       FILE *arqFuncionario;
       arqFuncionario = fopen("cadFuncionario.txt", "rb");
@@ -472,7 +476,7 @@ void pesquisarCadastros(){
             fgets(pesquisa, sizeof(pesquisa), stdin);
             while(fread(&funcionario, sizeof(Funcionario),1,arqFuncionario) == 1){
                 if(strcmp(pesquisa, funcionario.codigo) == 0){
-                  printf("Codigo: %s", funcionario.codigo);
+                  printf("Codigo: #%i  ", funcionario.codigo);
                   printf("Nome: %s\n", funcionario.nome);
                   printf("Contato: %i\n", funcionario.telefone);
                   printf("Cargo: %s", funcionario.cargo);
@@ -485,7 +489,7 @@ void pesquisarCadastros(){
             fgets(pesquisa, sizeof(pesquisa), stdin);
             while(fread(&funcionario, sizeof(Funcionario),1,arqFuncionario) == 1){
                 if(strcmp(pesquisa, funcionario.nome) == 0){
-                  printf("Codigo: %s", funcionario.codigo);
+                  printf("Codigo: #%i  ", funcionario.codigo);
                   printf("Nome: %s\n", funcionario.nome);
                   printf("Contato: %i\n", funcionario.telefone);
                   printf("Cargo: %s", funcionario.cargo);
@@ -500,15 +504,13 @@ void pesquisarCadastros(){
     getchar();
 }
 
-
-
-int checarCodigo(int tarefa, char codigo[100]){
+/* int checarCodigo(int tarefa, char codigo[100]){
   if(tarefa == 1){
     Cliente cliente;
     FILE *arqCliente;
     arqCliente = fopen("cadCliente.txt", "rb");
     while(fread(&cliente, sizeof(Cliente),1,arqCliente) ==1){
-        system("cls");
+        //system("cls");
         if(strcmp(codigo, cliente.codigo) == 0){
           return 1;
         }
@@ -526,18 +528,18 @@ int checarCodigo(int tarefa, char codigo[100]){
           return 0;
     }
   }
-}
-void pesquisarClienteEstadia(char nomeCliente[], char codCliente[]){
+} */
+
+void pesquisarClienteEstadia(char nomeCliente[], int *codCliente){
   Cliente cliente;
   FILE *arqCliente;
   arqCliente = fopen("cadCliente.txt", "rb");
     if(arqCliente == NULL){
       puts("Nao foi possivel abrir o arquivo! :(");
     }else{
-        strcat(nomeCliente, "#");
         while(fread(&cliente, sizeof(Cliente),1,arqCliente) == 1){
             if(strcmp(nomeCliente, cliente.nome) == 0){
-              strcpy(codCliente,cliente.codigo);
+              *codCliente = cliente.codigo;
             }
          }
       fclose(arqCliente);
@@ -546,10 +548,12 @@ void pesquisarClienteEstadia(char nomeCliente[], char codCliente[]){
 
 void pesquisarEstadia()
 {
-  system("cls");
-  Estadia estadia;
+  // Os puts aleatórios são pra "debugar"
+  //system("cls");
+  struct Estadia *estadia = malloc(sizeof(struct Estadia));
   FILE *arqEstadia;
-  char nomeCliente[100], codCliente[100];
+  char nomeCliente[100];
+  int *codCliente;
   getchar();
   arqEstadia = fopen("estadias.txt", "rb");
   if (arqEstadia == NULL)
@@ -560,18 +564,25 @@ void pesquisarEstadia()
   {
     printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
     fgets(nomeCliente, sizeof(nomeCliente), stdin);
-    pesquisarClienteEstadia(nomeCliente, codCliente);
+    pesquisarClienteEstadia(nomeCliente, &codCliente);
+    puts("\n1\n");
+    printf("Codigo cliente: %i\n", codCliente);
+    printf("estadia.codCliente: %i", estadia->codCliente);
+    getchar();
+    fseek(arqEstadia, 0, SEEK_SET);
     while (fread(&estadia, sizeof(Estadia), 1, arqEstadia) == 1)
     {
-      if (strcmp(codCliente, estadia.codCliente) == 0)
+      puts("\n2\n");
+      if (codCliente == estadia->codCliente)
       {
-        system("cls");
-        printf("Codigo Cliente: %s", estadia.codCliente);
-        printf("Codigo Estadia: %s", estadia.codigo);
-        printf("Codigo Quarto: %s\n", estadia.codQuarto);
-        printf("Data de entrada: %i\n", estadia.dataEntrada);
-        printf("Data de saída: %i\n", estadia.dataSaida);
-        printf("Quantidade de diarias: %i\n", estadia.quantidadeDiarias);
+        puts("\n3\n");
+        //system("cls");
+        printf("Codigo Cliente: %i  ", estadia->codCliente);
+        printf("Codigo Estadia: %s", estadia->codigo);
+        printf("Codigo Quarto: %s\n", estadia->codQuarto);
+        printf("Data de entrada: %i\n", estadia->dataEntrada);
+        printf("Data de saída: %i\n", estadia->dataSaida);
+        printf("Quantidade de diarias: %i\n", estadia->quantidadeDiarias);
         puts("--------------------------------------");
       }
     }
@@ -581,12 +592,34 @@ void pesquisarEstadia()
   getch();
 }
 
+int gerarCodigo(int tarefa){
+  int cod = 1;
+  if(tarefa == 1){
+    Cliente cliente;
+    FILE* arqCliente;
+    arqCliente = fopen("cadCliente.txt","rb");
+    while(fread(&cliente, sizeof(Cliente),1,arqCliente) == 1){
+      cod++;
+    }
+  }else if(tarefa == 2){
+    Funcionario funcionario;
+    FILE *arqFuncionario;
+    arqFuncionario = fopen("cadFuncionario.txt","rb");
+    while(fread(&funcionario, sizeof(Funcionario),1,arqFuncionario) == 1){
+      cod++;
+    }
+  }
+  return cod;
+}
+
+
 void pontosFidelidade()
 {
-  system("cls");
+  //system("cls");
   Estadia estadia;
   FILE *arqEstadia;
-  char nomeCliente[100], codCliente[100];
+  char nomeCliente[100];
+  int codCliente;
   getchar();
   arqEstadia = fopen("estadias.txt", "rb");
   if (arqEstadia == NULL)
@@ -600,10 +633,10 @@ void pontosFidelidade()
     pesquisarClienteEstadia(nomeCliente, codCliente);
     while (fread(&estadia, sizeof(Estadia), 1, arqEstadia) == 1)
     {
-      if (strcmp(codCliente, estadia.codCliente) == 0)
+      if (codCliente == estadia.codCliente)
       {
-        system("cls");
-        printf("Codigo Cliente: %s", estadia.codCliente);
+        //system("cls");
+        printf("Codigo Cliente: #%i ", estadia.codCliente);
         printf("Codigo Estadia: %s", estadia.codigo);
         printf("Quantidade de diarias: %i\n", estadia.quantidadeDiarias);
         printf("Pontos de fidelidade: %i\n", estadia.quantidadeDiarias * 10);
@@ -619,7 +652,7 @@ void pontosFidelidade()
 //main
 int main(void)
 {
-    system("cls");
+    //system("cls");
     int select = -1;
     setlocale(LC_ALL,"");
     while(select != 0)
