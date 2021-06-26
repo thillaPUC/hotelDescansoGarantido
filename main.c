@@ -546,51 +546,6 @@ void pesquisarClienteEstadia(char nomeCliente[], int *codCliente){
     }
 }
 
-void pesquisarEstadia()
-{
-  // Os puts aleatórios são pra "debugar"
-  //system("cls");
-  struct Estadia *estadia = malloc(sizeof(struct Estadia));
-  FILE *arqEstadia;
-  char nomeCliente[100];
-  int *codCliente;
-  getchar();
-  arqEstadia = fopen("estadias.txt", "rb");
-  if (arqEstadia == NULL)
-  {
-    puts("Nao foi possivel abrir o arquivo! :(");
-  }
-  else
-  {
-    printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
-    fgets(nomeCliente, sizeof(nomeCliente), stdin);
-    pesquisarClienteEstadia(nomeCliente, &codCliente);
-    puts("\n1\n");
-    printf("Codigo cliente: %i\n", codCliente);
-    printf("estadia.codCliente: %i", estadia->codCliente);
-    getchar();
-    fseek(arqEstadia, 0, SEEK_SET);
-    while (fread(&estadia, sizeof(Estadia), 1, arqEstadia) == 1)
-    {
-      puts("\n2\n");
-      if (codCliente == estadia->codCliente)
-      {
-        puts("\n3\n");
-        //system("cls");
-        printf("Codigo Cliente: %i  ", estadia->codCliente);
-        printf("Codigo Estadia: %s", estadia->codigo);
-        printf("Codigo Quarto: %s\n", estadia->codQuarto);
-        printf("Data de entrada: %i\n", estadia->dataEntrada);
-        printf("Data de saída: %i\n", estadia->dataSaida);
-        printf("Quantidade de diarias: %i\n", estadia->quantidadeDiarias);
-        puts("--------------------------------------");
-      }
-    }
-  }
-  fclose(arqEstadia);
-  puts("Pressione qualquer tecla para continuar!");
-  getch();
-}
 
 int gerarCodigo(int tarefa){
   int cod = 1;
@@ -612,14 +567,12 @@ int gerarCodigo(int tarefa){
   return cod;
 }
 
-
-void pontosFidelidade()
+void pesquisarEstadia()
 {
-  //system("cls");
-  Estadia estadia;
+  struct Estadia *estadia = malloc(sizeof(struct Estadia));
   FILE *arqEstadia;
   char nomeCliente[100];
-  int codCliente;
+  int *codClienteEstadia;
   getchar();
   arqEstadia = fopen("estadias.txt", "rb");
   if (arqEstadia == NULL)
@@ -630,23 +583,62 @@ void pontosFidelidade()
   {
     printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
     fgets(nomeCliente, sizeof(nomeCliente), stdin);
-    pesquisarClienteEstadia(nomeCliente, codCliente);
-    while (fread(&estadia, sizeof(Estadia), 1, arqEstadia) == 1)
+    pesquisarClienteEstadia(nomeCliente, &codClienteEstadia);
+    getchar();
+    fseek(arqEstadia, 0, SEEK_SET);
+    while (fread(estadia, sizeof(struct Estadia), 1, arqEstadia) == 1)
     {
-      if (codCliente == estadia.codCliente)
+      if (codClienteEstadia == estadia->codCliente)
       {
-        //system("cls");
-        printf("Codigo Cliente: #%i ", estadia.codCliente);
-        printf("Codigo Estadia: %s", estadia.codigo);
-        printf("Quantidade de diarias: %i\n", estadia.quantidadeDiarias);
-        printf("Pontos de fidelidade: %i\n", estadia.quantidadeDiarias * 10);
+        printf("Codigo Cliente: %i\n", estadia->codCliente);
+        printf("Codigo Estadia: %s", estadia->codigo);
+        printf("Codigo Quarto: %s\n", estadia->codQuarto);
+        printf("Data de entrada: %s\n", estadia->dataEntrada);
+        printf("Data de saída: %s\n", estadia->dataSaida);
+        printf("Quantidade de diarias: %i\n", estadia->quantidadeDiarias);
         puts("--------------------------------------");
       }
     }
   }
   fclose(arqEstadia);
   puts("Pressione qualquer tecla para continuar!");
-  getch();
+  getchar();
+}
+
+void pontosFidelidade()
+{
+  struct Estadia *estadia = malloc(sizeof(struct Estadia));
+  FILE *arqEstadia;
+  char nomeCliente[100];
+  int *codClienteEstadia;
+  getchar();
+  arqEstadia = fopen("estadias.txt", "rb");
+  if (arqEstadia == NULL)
+  {
+    puts("Nao foi possivel abrir o arquivo! :(");
+  }
+  else
+  {
+    printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
+    fgets(nomeCliente, sizeof(nomeCliente), stdin);
+    pesquisarClienteEstadia(nomeCliente, &codClienteEstadia);
+    getchar();
+    fseek(arqEstadia, 0, SEEK_SET);
+    while (fread(estadia, sizeof(struct Estadia), 2, arqEstadia) == 1)
+    {
+      if (codClienteEstadia == estadia->codCliente)
+      {
+        printf("Codigo Cliente: %i\n", estadia->codCliente);
+        printf("Codigo Estadia: %s", estadia->codigo);
+        printf("Quantidade de diarias: %i\n", estadia->quantidadeDiarias);
+        printf("Pontos fidelidade: %i\n", estadia->quantidadeDiarias * 10);
+        puts("--------------------------------------");
+      }
+    }
+  }
+  fclose(arqEstadia);
+  puts("Pressione qualquer tecla para continuar!");
+  getchar();
 }
 
 //main
