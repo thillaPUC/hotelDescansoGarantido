@@ -186,7 +186,7 @@ int verificaMes(int mes){
 typedef struct Quarto{
     char codigo[100];
     char quantidadeHospedes[100];
-    int valorDiaria;
+    float valorDiaria;
     char status[100];
 } Quarto;
 
@@ -201,24 +201,22 @@ void cadastrarQuarto(){
         puts("\nNao foi possivel abrir o arquivo! :(");
       }else{
       getchar();
-      puts("\nInsira o codigo do quarto ( Padrao: 2 ou 3 algarismos )");
+      puts("\nInsira o codigo do quarto:");
       fgets(quarto.codigo, sizeof(quarto.codigo),stdin);
       scodigo = checarCodigoQuarto(quarto.codigo);
       if(scodigo == 1){
-        puts("\nCodigo NAO disponivel!");
+        puts("\nCodigo NAO disponivel! Pressione enter para retornar ao menu!");
       }else{
-        //strcat(quarto.codigo, "#");
-        puts("\nDigite a quantidade de hospedes ( no maximo 4 ):");
+        puts("\nDigite a quantidade de hospedes:");
         fgets(quarto.quantidadeHospedes, sizeof(quarto.quantidadeHospedes),stdin);
-        //strcat(quarto.quantidadeHospedes, "#");
-        puts("\nDigite o valor da diaria:");
-        scanf("%i", &quarto.valorDiaria);
+        puts("\nDigite o valor da diaria (separar centavos com ponto):");
+        scanf("%f", &quarto.valorDiaria);
         getchar();
         strcpy(quarto.status, "desocupado");
-        fseek(arqQuarto,SEEK_END,1);
         fwrite(&quarto, sizeof(Quarto),1,arqQuarto);
         fclose(arqQuarto);
-        puts("\nCadastrar mais quartos?\n[S] [N]");
+        puts("\nQuarto Cadastrado com sucesso! Voce ja pode utiliza-lo em uma hospedagem!");
+        puts("\nCadastrar mais quartos?\n[S][N]");
       }
     }
   }while(getchar() == 's');
