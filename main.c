@@ -323,16 +323,25 @@ void cadastrarQuarto()
             getchar();
             quarto.codigo = gerarCodigo(3);
             printf("\nO codigo gerado para o quarto foi: %d", quarto.codigo);
-            puts("\nDigite a quantidade de hospedes:");
-            scanf("%i", &quarto.quantidadeHospedes);
-            puts("\nDigite o valor da diaria (Valores disponiveis sao: 100, 200 ou 300)");
-            scanf("%i", &quarto.valorDiaria);
+            puts("\nDigite a quantidade de hospedes (Padrao: numero inteiro):");
+            scanf("%d", &quarto.quantidadeHospedes);
             getchar();
-            strcpy(quarto.status, "desocupado");
-            fwrite(&quarto, sizeof(Quarto),1,arqQuarto);
-            fclose(arqQuarto);
-            puts("\nQuarto Cadastrado com sucesso! Voce ja pode utiliza-lo em uma hospedagem!");
-            puts("\nCadastrar mais quartos?\n[S][N]");
+            if(quarto.quantidadeHospedes <= 0){
+                puts("\n Valor inválido");
+            } else {
+                puts("\nDigite o valor da diaria (Padrao: numero inteiro)");
+                scanf("%d", &quarto.valorDiaria);
+                getchar();
+                if(quarto.valorDiaria <= 0){
+                    puts("\n Valor inválido");
+                } else {
+                    strcpy(quarto.status, "desocupado");
+                    fwrite(&quarto, sizeof(Quarto),1,arqQuarto);
+                    fclose(arqQuarto);
+                    puts("\nQuarto Cadastrado com sucesso! Voce ja pode utiliza-lo em uma hospedagem!");
+                    puts("\nCadastrar mais quartos?\n[S][N]");
+                }
+            }
 
         }
     }
