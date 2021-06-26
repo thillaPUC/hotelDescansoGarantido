@@ -21,6 +21,8 @@ void cabecalho(int tarefa);
 int gerarCodigo(int tarefa);
 int calcularQntdeDiarias(char entrada[6], char saida[6]);
 void alterarStatusQuarto(int codigoQuarto);
+void EncerrarEstadia();
+int pesquisarDiariaQuarto(int codigo);
 
 //function do Menu principal
 enum opcoes {SAIR, CLIENTE, FUNCIONARIO, QUARTO, ESTADIA, PESQUISAR_CADASTROS, LISTAR_CADASTROS, EXIBIR_ESTADIAS, PESQUISAR_ESTADIA, PONTOS_FIDELIDADE, CHECKOUT};
@@ -65,7 +67,8 @@ int selectFunctions(int select)
         pontosFidelidade();
         break;
     case CHECKOUT:
-        puts("\nFazer checkout NADA AQUI");
+        puts("\nEncerrar uma Estadia");
+        EncerrarEstadia();
         break;
     case SAIR:
         return 0;
@@ -239,8 +242,50 @@ int verificaMes(int mes)
 
 void EncerrarEstadia()
 {
-//printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
-//fgets(nomeCliente, sizeof(nomeCliente), stdin);
+    Estadia estadia;
+    FILE *arquivoEstadia;
+    char nomeCliente[100];
+    int codClienteEstadia, codQuartoEstadia, codigoEstadia, diarias, valorDiaria;
+    float totalPagar;
+    getchar();
+    arquivoEstadia = fopen("estadias.txt", "rb");
+    if (arquivoEstadia == NULL)
+    {
+        puts("Nao foi possivel abrir o arquivo! :(");
+    }
+    else
+    {
+        printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
+        fgets(nomeCliente, sizeof(nomeCliente), stdin);
+        codClienteEstadia = pesquisarClienteEstadia(nomeCliente);
+        do
+        {
+           if (codClienteEstadia == estadia.codCliente)
+            {
+                codQuartoEstadia = estadia.codQuarto;
+                codigoEstadia = estadia.codigo;
+                diarias = estadia.quantidadeDiarias;
+                break;
+            }
+
+            fread(&estadia, sizeof(Estadia),1,arquivoEstadia);
+        }
+        while (!feof(arquivoEstadia));
+
+        printf("diarias: %d", diarias);
+
+        valorDiaria = pesquisarDiariaQuarto(codQuartoEstadia);
+
+        totalPagar = valorDiaria*diarias;
+        printf("\n O valor total a pagar por %d diarias e de: R$ %.2f reais. \n\n O valor de cada diaria e de: R$ %d\n\n", diarias, totalPagar, valorDiaria);
+
+        //to do: mudar o status do quarto
+        //to do: retirar essa estadia da lista?
+
+    }
+    fclose(arquivoEstadia);
+    puts("Pressione qualquer tecla para continuar!");
+    getchar();
 }
 
 //functions do Cadastro de Quartos
@@ -292,6 +337,7 @@ void alterarStatusQuarto(int codigoQuarto){
     fseek(arqQuarto, posicao*sizeof(Quarto), SEEK_SET);
     fread(&quarto, sizeof(Quarto), 1, arqQuarto);
     printf("\n\nO quarto e: %d\n Tem a capacidade de: %d", quarto.codigo, quarto.quantidadeHospedes);
+    fclose(arqQuarto);
 }
 
 int pesquisarDadosQuartos(int numHospedes)
@@ -321,6 +367,32 @@ int pesquisarDadosQuartos(int numHospedes)
         while (!feof(arqQuarto));
         fclose(arqQuarto);
         return codigo;
+    }
+}
+
+int pesquisarDiariaQuarto(int codigo)
+{
+    Quarto quarto;
+    FILE *arquivoQuarto;
+    arquivoQuarto = fopen("quartos.txt", "rb");
+    if(arquivoQuarto == NULL)
+    {
+        puts("Nao foi possivel abrir o arquivo! :(");
+        return 0;
+    }
+    else
+    {
+        do
+        {
+            if(codigo == quarto.codigo)
+            {
+                return quarto.valorDiaria;
+                //break;
+            }
+            fread(&quarto, sizeof(Quarto),1,arquivoQuarto);
+        }
+        while (!feof(arquivoQuarto));
+        fclose(arquivoQuarto);
     }
 }
 
@@ -779,7 +851,7 @@ void pesquisarEstadia()
                 printf("Data de saída: %s\n", estadia.dataSaida);
                 printf("Quantidade de diarias: %d\n", estadia.quantidadeDiarias);
                 puts("--------------------------------------");
-                break;
+               // break; -> achei que era esse brea que nao tava deixando ler os outros
             }
 
             fread(&estadia, sizeof(Estadia),1,arqEstadia);
@@ -819,7 +891,7 @@ void pontosFidelidade()
                 printf("Quantidade de diarias: %d\n", estadia.quantidadeDiarias);
                 printf("Pontos fidelidade: %d\n", estadia.quantidadeDiarias * 10);
                 puts("--------------------------------------");
-                break;
+                //break;
             }
 
             fread(&estadia, sizeof(Estadia),1,arqEstadia);
@@ -862,14 +934,13 @@ void cabecalho(int tarefa)
 //main
 int main(void)
 {
-    //system("cls");
     int select = -1;
     setlocale(LC_ALL,"");
     while(select != 0)
     {
         system("cls");
         cabecalho(3);
-        puts("\n\nSelecione as opcoes a seguir: \n1 - Cadastrar cliente; \n2 - Cadastrar funcionario; \n3 - Cadastrar quarto; \n4 - Cadastrar estadia; \n5 - Fazer pesquisa; \n6 - Listar Cadastros\n7 - Exibir estadias; \n8 - Fazer pesquisa de estadia \n9 - Calcular pontos fidelidade; \n10 - Fazer checkout; \n0 - Sair;\n");
+        puts("\n\nSelecione as opcoes a seguir: \n1 - Cadastrar cliente; \n2 - Cadastrar funcionario; \n3 - Cadastrar quarto; \n4 - Cadastrar estadia; \n5 - Fazer pesquisa; \n6 - Listar Cadastros\n7 - Exibir estadias; \n8 - Fazer pesquisa de estadia \n9 - Calcular pontos fidelidade; \n10 - Encerrar uma Estadia; \n0 - Sair;\n");
         scanf("%i", &select);
         selectFunctions(select);
     }
