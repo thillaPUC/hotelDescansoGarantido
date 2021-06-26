@@ -184,7 +184,7 @@ void cadastrarEstadia()
                 strcpy(estadia->dataEntrada,dataEntrada);
                 strcpy(estadia->dataSaida,dataSaida);
 
-                estadias = fopen("estadias.txt", "wb");
+                estadias = fopen("estadias.txt", "ab");
                 if (estadias != NULL)
                 {
                     fwrite(estadia, sizeof(struct Estadia), 1, estadias);
@@ -840,7 +840,7 @@ void pesquisarEstadia()
            if (codClienteEstadia == estadia.codCliente)
            {
                 printf("Codigo Cliente: %d\n", estadia.codCliente);
-                printf("Codigo Estadia: %d", estadia.codigo);
+                printf("Codigo Estadia: %d\n", estadia.codigo);
                 printf("Codigo Quarto: %d\n", estadia.codQuarto);
                 printf("Data de entrada: %s\n", estadia.dataEntrada);
                 printf("Data de saída: %s\n", estadia.dataSaida);
@@ -899,7 +899,7 @@ void pontosFidelidade()
 }
 
 void cabecalho(int tarefa){
-    system("cls");   
+    system("cls");
     switch(tarefa)
     {
     case 1:
@@ -938,7 +938,7 @@ void cabecalho(int tarefa){
 int main(void)
 {
     int select = -1;
-    setlocale(LC_ALL,""); 
+    setlocale(LC_ALL,"");
     while(select != 0)
     {
         cabecalho(3);
