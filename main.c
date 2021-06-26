@@ -193,7 +193,7 @@ void cadastrarEstadia()
                     puts("\nEstadia criada com sucesso!");
                     lerEstadia();
                     //alterarStatusQuarto(estadia->codQuarto);
-                    puts("\nCadastrar mais quartos?\n[S][N]");
+                    puts("\nCadastrar mais estadia?\n[S][N]");
                 }
                 else
                 {
