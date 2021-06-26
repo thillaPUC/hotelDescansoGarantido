@@ -13,10 +13,17 @@
 	<string.h>
 	<ctype.h>
 
-1624722129 source:d:\thilla\0.puc\repopuc\fes-aed\hoteldescansogarantido\main.c
+1624728187 source:d:\thilla\0.puc\repopuc\fes-aed\hoteldescansogarantido\main.c
 	<stdio.h>
 	<stdlib.h>
 	<locale.h>
 	<string.h>
 	<ctype.h>
+
+1623685160 source:d:\thilla\0.puc\repopuc\fes-aed\hoteldescansogarantido\munit.c
+	<stdarg.h>
+	<stdlib.h>
+	<stdint.h>
+	<inttypes.h>
+	<string.h>
 
