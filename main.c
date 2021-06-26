@@ -76,7 +76,7 @@ int selectFunctions(int select){
 //- - - - - - - BP - - - - - - -
 //functions do Cadastro de Estadia
 typedef struct Estadia{
-    char codigo[100];
+    int codigo;
     int codCliente;
     char codQuarto[100];
     int quantidadeDiarias;
@@ -85,17 +85,17 @@ typedef struct Estadia{
 } Estadia;
 
 void cadastrarEstadia(){
-    system("cls");
     cabecalho(1);
-    int i, calc, calc2, totalMes, diaEnt, mesEnt, diaSai, mesSai, qntDiaria, *codCliente;
-    char codEstadia[100], nomeCliente[100], numHospedes[100], codQuarto[5], dataEntrada[6], dataSaida[6], str[4];
+    int i, calc, calc2, totalMes, diaEnt, mesEnt, diaSai, mesSai, qntDiaria, *codCliente, codEstadia;
+    char nomeCliente[100], numHospedes[100], codQuarto[5], dataEntrada[6], dataSaida[6], str[4];
     FILE *estadias;
     struct Estadia *estadia = malloc(sizeof(struct Estadia));
 
     getchar();
-    printf("\n Informe um codigo para esta estadia:\n");
-    fgets(codEstadia, sizeof(codEstadia), stdin);
-    strcpy(estadia->codigo,codEstadia);
+
+    codEstadia = gerarCodigo(4);
+    estadia->codigo = codEstadia;
+    printf("\nO codigo gerado para a estadia foi: %d", estadia->codigo);
 
     printf("\n Informe o nome do Cliente conforme cadastro de clientes:\n");
     fgets(nomeCliente, sizeof(nomeCliente), stdin);
@@ -184,40 +184,34 @@ int verificaMes(int mes){
 
 //functions do Cadastro de Quartos
 typedef struct Quarto{
-    char codigo[100];
+    int codigo;
     char quantidadeHospedes[100];
-    float valorDiaria;
+    int valorDiaria;
     char status[100];
 } Quarto;
 
 void cadastrarQuarto(){
-  int scodigo;
   do{
       Quarto quarto;
       FILE *arqQuarto;
-      int scodigo;
       arqQuarto = fopen("quartos.txt", "ab");
       if(arqQuarto == NULL){
         puts("\nNao foi possivel abrir o arquivo! :(");
       }else{
-      getchar();
-      puts("\nInsira o codigo do quarto:");
-      fgets(quarto.codigo, sizeof(quarto.codigo),stdin);
-      scodigo = checarCodigoQuarto(quarto.codigo);
-      if(scodigo == 1){
-        puts("\nCodigo NAO disponivel! Pressione enter para retornar ao menu!");
-      }else{
+        getchar();
+        quarto.codigo = gerarCodigo(3);
+        printf("\nO codigo gerado para o funcionario foi: %d", quarto.codigo);
         puts("\nDigite a quantidade de hospedes:");
         fgets(quarto.quantidadeHospedes, sizeof(quarto.quantidadeHospedes),stdin);
-        puts("\nDigite o valor da diaria (separar centavos com ponto):");
-        scanf("%f", &quarto.valorDiaria);
+        puts("\nDigite o valor da diaria (Valores disponiveis sao: 100, 200 ou 300)");
+        scanf("%i", &quarto.valorDiaria);
         getchar();
         strcpy(quarto.status, "desocupado");
         fwrite(&quarto, sizeof(Quarto),1,arqQuarto);
         fclose(arqQuarto);
         puts("\nQuarto Cadastrado com sucesso! Voce ja pode utiliza-lo em uma hospedagem!");
         puts("\nCadastrar mais quartos?\n[S][N]");
-      }
+
     }
   }while(getchar() == 's');
 }
@@ -277,10 +271,10 @@ void cadastrarFuncionario(){
       if(arqFuncionario == NULL){
         puts("Nao foi possivel abrir o arquivo! :(");
       }else{
-        system("cls");
         cabecalho(1);
         getchar();
         funcionario.codigo = gerarCodigo(2);
+        printf("\nO codigo gerado para o funcionario foi: %d", funcionario.codigo);
         puts("Digite o nome:");
         fgets(funcionario.nome, sizeof(funcionario.nome),stdin);
         puts("Telefone de contato:");
@@ -322,9 +316,9 @@ void cadastrarCliente(){
         puts("Nao foi possivel abrir o arquivo! :(");
       }else{
        getchar();
-        system("cls");
         cabecalho(1);
         cliente.codigo = gerarCodigo(1);
+        printf("\nO codigo gerado para o cliente foi: %d", cliente.codigo);
         puts("\nDigite o nome:");
         fgets(cliente.nome, sizeof(cliente.nome),stdin);
         puts("Telefone de contato:");
@@ -535,6 +529,7 @@ int gerarCodigo(int tarefa){
     while(fread(&cliente, sizeof(Cliente),1,arqCliente) == 1){
       cod++;
     }
+    fclose(arqCliente);
   }else if(tarefa == 2){
     Funcionario funcionario;
     FILE *arqFuncionario;
@@ -542,6 +537,23 @@ int gerarCodigo(int tarefa){
     while(fread(&funcionario, sizeof(Funcionario),1,arqFuncionario) == 1){
       cod++;
     }
+    fclose(arqFuncionario);
+  }else if(tarefa == 3){
+    Quarto quarto;
+    FILE *arqQuarto;
+    arqQuarto = fopen("quartos.txt","rb");
+    while(fread(&quarto, sizeof(Quarto),1,arqQuarto) == 1){
+      cod++;
+    }
+    fclose(arqQuarto);
+  }else if(tarefa == 4){
+    Estadia estadia;
+    FILE *arqEstadia;
+    arqEstadia = fopen("estadias.txt","rb");
+    while(fread(&estadia, sizeof(Estadia),1,arqEstadia) == 1){
+      cod++;
+    }
+    fclose(arqEstadia);
   }
   return cod;
 }
