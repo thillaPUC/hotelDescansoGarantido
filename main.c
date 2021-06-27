@@ -24,13 +24,6 @@ void pesquisarEstadia();
 void pontosFidelidade();
 void cabecalho(int tarefa);
 
-//int checarCodigoQuarto(char codigo[100]);
-//int calcularQntdeDiarias(char entrada[6], char saida[6]);
-//int validacaoStringCliente(char string[100]);
-//int validacaoTelefoneCliente(int num);
-
-
-
 enum opcoes {SAIR= 0,CADASTRO = 1, CLIENTE = 11, FUNCIONARIO = 12, QUARTO = 13, ESTADIA = 14, PESQUISAR = 2, PESQUISAR_CADASTROS = 21, PESQUISAR_ESTADIA = 22, LISTAR = 3 , LISTAR_CADASTROS = 31, EXIBIR_ESTADIAS = 32, PONTOS_FIDELIDADE = 4, CHECKOUT = 5};
 
 int selectFunctions(int select)
@@ -123,7 +116,6 @@ void cadastrarEstadia()
         else
         {
             estadia->codCliente = codCliente;
-            //printf("\nO do cliente e: %d", estadia->codCliente);
             printf("\n Informe o numero total de hospedes:\n");
             scanf("%i", &numHospedes);
             getchar();
@@ -197,15 +189,12 @@ void cadastrarEstadia()
                     fclose(estadias);
                     puts("\nEstadia criada com sucesso!");
                     lerEstadia();
-                    //alterarStatusQuarto(estadia->codQuarto);
                     puts("\nCadastrar mais quartos?\n[S][N]");
                 }
                 else
                 {
                     puts("\nErro ao gravar estadia");
                 }
-
-                //todo: mudar status do quarto para ocupado
 
             }
 
@@ -289,8 +278,6 @@ void EncerrarEstadia()
 
             totalPagar = valorDiaria*diarias;
             printf("\n O valor total a pagar por %d diarias e de: R$ %.2f reais. \n\n O valor de cada diaria e de: R$ %d\n\n", diarias, totalPagar, valorDiaria);
-            //to do: mudar o status do quarto
-            //to do: retirar essa estadia da lista?
         }
 
         fclose(arquivoEstadia);
@@ -748,13 +735,6 @@ int pesquisarClienteEstadia(char nomeCliente[])
     }
     else
     {
-        //while(fread(&cliente, sizeof(Cliente),1,arqCliente) == 1)
-        // {
-        //  if(strcmp(nomeCliente, cliente.nome) == 0)
-        //  {
-        //     codigo = cliente.codigo;
-        // }
-        // }
         do
         {
             if(strcmp(nomeCliente, cliente.nome) == 0)
@@ -884,7 +864,6 @@ void pesquisarEstadia()
                 printf("Data de saída: %s\n", estadia.dataSaida);
                 printf("Quantidade de diarias: %d\n", estadia.quantidadeDiarias);
                 puts("--------------------------------------");
-               // break; -> achei que era esse brea que nao tava deixando ler os outros
             }
 
             fread(&estadia, sizeof(Estadia),1,arqEstadia);
@@ -923,7 +902,6 @@ void pontosFidelidade()
                 printf("Quantidade de diarias: %d\n", estadia.quantidadeDiarias);
                 printf("Pontos fidelidade: %d\n", estadia.quantidadeDiarias * 10);
                 puts("--------------------------------------");
-                //break;
             }
 
             fread(&estadia, sizeof(Estadia),1,arqEstadia);
