@@ -120,7 +120,7 @@ void cadastrarEstadia()
         else
         {
             estadia->codCliente = codCliente;
-            printf("\nO do cliente e: %d", estadia->codCliente);
+            //printf("\nO do cliente e: %d", estadia->codCliente);
             printf("\n Informe o numero total de hospedes:\n");
             scanf("%i", &numHospedes);
             getchar();
@@ -134,7 +134,7 @@ void cadastrarEstadia()
             else
             {
                 estadia->codQuarto = codQuarto;
-                printf("\nO do quarto encontrado foi o : %d", estadia->codQuarto);
+                printf("\nO numero do quarto encontrado e: %d", estadia->codQuarto);
 
                 printf("\nSo aceitando reservas para o ano corrente.\n");
 
