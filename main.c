@@ -327,13 +327,17 @@ void cadastrarQuarto()
             scanf("%d", &quarto.quantidadeHospedes);
             getchar();
             if(quarto.quantidadeHospedes <= 0){
-                puts("\n Valor inválido");
+                puts("\n Valor invalido");
+                puts("\n Pressione qualquer tecla para continuar!");
+                getchar();
             } else {
                 puts("\nDigite o valor da diaria (Padrao: numero inteiro)");
                 scanf("%d", &quarto.valorDiaria);
                 getchar();
                 if(quarto.valorDiaria <= 0){
-                    puts("\n Valor inválido");
+                    puts("\n Valor invalido");
+                    puts("\n Pressione qualquer tecla para continuar!");
+                    getchar();
                 } else {
                     strcpy(quarto.status, "desocupado");
                     fwrite(&quarto, sizeof(Quarto),1,arqQuarto);
