@@ -5,27 +5,30 @@
 #include <ctype.h>
 #include <unistd.h>
 
+int selectFunctions(int select);
 void cadastrarEstadia();
+void lerEstadia();
+int verificaMes(int mes);
+void EncerrarEstadia();
 void cadastrarQuarto();
+int pesquisarDadosQuartos(int numHospedes);
+int pesquisarDiariaQuarto(int codigo);
 void cadastrarFuncionario();
 void cadastrarCliente();
-int checarCodigoQuarto(char codigo[100]);
+int validacaoString(char string[100]);
+void listarCadastros();
+void pesquisarCadastros();
 int pesquisarClienteEstadia(char nomeCliente[]);
-int pesquisarDadosQuartos(int numHospedes);
-int verificaMes(int mes);
-void lerEstadia();
+int gerarCodigo(int tarefa);
 void pesquisarEstadia();
 void pontosFidelidade();
-void pesquisarCadastros();
-void listarCadastros();
 void cabecalho(int tarefa);
-int gerarCodigo(int tarefa);
-int calcularQntdeDiarias(char entrada[6], char saida[6]);
-void alterarStatusQuarto(int codigoQuarto);
-void EncerrarEstadia();
-int pesquisarDiariaQuarto(int codigo);
-int validacaoStringCliente(char string[100]);
-int validacaoTelefoneCliente(int num);
+
+//int checarCodigoQuarto(char codigo[100]);
+//int calcularQntdeDiarias(char entrada[6], char saida[6]);
+//int validacaoStringCliente(char string[100]);
+//int validacaoTelefoneCliente(int num);
+
 
 
 enum opcoes {SAIR= 0,CADASTRO = 1, CLIENTE = 11, FUNCIONARIO = 12, QUARTO = 13, ESTADIA = 14, PESQUISAR = 2, PESQUISAR_CADASTROS = 21, PESQUISAR_ESTADIA = 22, LISTAR = 3 , LISTAR_CADASTROS = 31, EXIBIR_ESTADIAS = 32, PONTOS_FIDELIDADE = 4, CHECKOUT = 5};
@@ -350,17 +353,6 @@ void cadastrarQuarto()
         }
     }
     while(getchar() == 's');
-}
-
-void alterarStatusQuarto(int codigoQuarto){
-    Quarto quarto;
-    FILE *arqQuarto;
-    int posicao = codigoQuarto-1;
-    arqQuarto = fopen("quartos.txt", "rb");
-    fseek(arqQuarto, posicao*sizeof(Quarto), SEEK_SET);
-    fread(&quarto, sizeof(Quarto), 1, arqQuarto);
-    printf("\n\nO quarto e: %d\n Tem a capacidade de: %d", quarto.codigo, quarto.quantidadeHospedes);
-    fclose(arqQuarto);
 }
 
 int pesquisarDadosQuartos(int numHospedes)
